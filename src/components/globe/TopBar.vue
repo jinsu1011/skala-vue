@@ -1,17 +1,13 @@
 <script setup>
-import { ref } from 'vue'
 import { useWeatherStore } from '@/stores/weatherStore'
 import { useGeolocation } from '@/composables/useGeolocation'
 import CitySearchInput from './CitySearchInput.vue'
 import PwaInstallPrompt from '@/components/mobile/PwaInstallPrompt.vue'
-import SolarSystem3DStage from '@/components/solar/SolarSystem3DStage.vue'
 
 const emit = defineEmits(['select-city'])
 
 const weatherStore = useWeatherStore()
 const { geoState, errorMessage, getCurrentNearestCity } = useGeolocation()
-
-const isSolarModalOpen = ref(false)
 
 // 📍 GPS 내 위치 버튼 클릭
 const handleGPSClick = async () => {
@@ -35,17 +31,13 @@ const handleGPSClick = async () => {
       <CitySearchInput @select-city="(id) => emit('select-city', id)" />
     </div>
 
-    <!-- 우측 컨트롤 버튼들 (태양계 + 앱 설치 + GPS + 단위 토글) -->
+    <!-- 우측 컨트롤 버튼들 (태양계 이동 + 앱 설치 + GPS + 단위 토글) -->
     <div class="controls-area">
-      <!-- ☀️ 태양계 표면온도 비교 버튼 -->
-      <button
-        class="solar-btn"
-        title="태양계 표면온도 비교 뷰"
-        @click="isSolarModalOpen = true"
-      >
-        <span class="solar-icon">☀️</span>
-        <span class="solar-text">태양계 온도</span>
-      </button>
+      <!-- 🪐 태양계로 돌아가기 버튼 -->
+      <RouterLink to="/" class="solar-btn">
+        <span class="solar-icon">🪐</span>
+        <span class="solar-text">태양계</span>
+      </RouterLink>
 
       <!-- 📲 홈 화면에 추가 (PWA 설치) -->
       <PwaInstallPrompt />
@@ -75,12 +67,6 @@ const handleGPSClick = async () => {
     <div v-if="errorMessage" class="gps-error-toast">
       <span>ℹ️ {{ errorMessage }}</span>
     </div>
-
-    <!-- ☀️ 3D 태양계 표면온도 그래픽 스테이지 -->
-    <SolarSystem3DStage
-      :is-open="isSolarModalOpen"
-      @close="isSolarModalOpen = false"
-    />
   </header>
 </template>
 
@@ -141,6 +127,7 @@ const handleGPSClick = async () => {
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+  text-decoration: none;
   transition: all 0.2s ease;
 }
 

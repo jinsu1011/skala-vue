@@ -29,7 +29,7 @@ import UnitToggler from '@/components/exercise/UnitToggler.vue'
  */
 const route = useRoute()
 
-const GLOBE_ROUTES = ['GlobeHome', 'CityWeather']
+const GLOBE_ROUTES = ['GlobeHome', 'CityWeather', 'SolarSystem', 'PlanetDetail']
 const isGlobeView = computed(() => GLOBE_ROUTES.includes(route.name))
 
 watch(
