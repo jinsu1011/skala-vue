@@ -53,7 +53,7 @@ onMounted(async () => {
       <div class="solar-brand">
         <span class="brand-icon">🪐</span>
         <div>
-          <h1 class="brand-title">SKALA Solar System</h1>
+          <h1 class="brand-title">SKALA Weather</h1>
           <p class="brand-sub">행성을 클릭하여 탐색 · 🌍 지구 클릭 → 실시간 날씨</p>
         </div>
       </div>

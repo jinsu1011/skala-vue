@@ -62,7 +62,7 @@ export function useSolarSystem() {
     controls.minPolarAngle = Math.PI * 0.1
 
     // 조명
-    scene.add(new THREE.AmbientLight(0xffffff, 0.25))
+    scene.add(new THREE.AmbientLight(0xffffff, 0.45))
     const sunLight = new THREE.PointLight(0xffffff, 2.0, 300)
     sunLight.position.set(0, 0, 0)
     scene.add(sunLight)
@@ -93,8 +93,10 @@ export function useSolarSystem() {
       } else {
         material = new THREE.MeshStandardMaterial({
           color: data.color,
-          roughness: 0.65,
-          metalness: 0.15,
+          roughness: 0.45,
+          metalness: 0.25,
+          emissiveIntensity: 0.15,
+          emissive: data.color,
         })
       }
 
@@ -150,7 +152,7 @@ export function useSolarSystem() {
         scene.add(
           new THREE.Line(
             orbitGeo,
-            new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.12 }),
+            new THREE.LineBasicMaterial({ color: 0x6699cc, transparent: true, opacity: 0.35 }),
           ),
         )
       }
