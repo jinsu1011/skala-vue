@@ -10,18 +10,126 @@ const API_URL = 'https://api.open-meteo.com/v1/forecast'
 
 // 12개 도시 정보 (국내 8개 + 해외 4개)
 export const CITIES = [
-  { id: 'city_01', name: '서울', englishName: 'Seoul', countryGroup: 'KR', region: '대한민국 서울특별시', lat: 37.5665, lon: 126.978, timezone: 'Asia/Seoul' },
-  { id: 'city_02', name: '인천', englishName: 'Incheon', countryGroup: 'KR', region: '대한민국 인천광역시', lat: 37.4563, lon: 126.7052, timezone: 'Asia/Seoul' },
-  { id: 'city_03', name: '수원', englishName: 'Suwon', countryGroup: 'KR', region: '대한민국 경기도 수원시', lat: 37.2636, lon: 127.0286, timezone: 'Asia/Seoul' },
-  { id: 'city_04', name: '대전', englishName: 'Daejeon', countryGroup: 'KR', region: '대한민국 대전광역시', lat: 36.3504, lon: 127.3845, timezone: 'Asia/Seoul' },
-  { id: 'city_05', name: '대구', englishName: 'Daegu', countryGroup: 'KR', region: '대한민국 대구광역시', lat: 35.8714, lon: 128.6014, timezone: 'Asia/Seoul' },
-  { id: 'city_06', name: '광주', englishName: 'Gwangju', countryGroup: 'KR', region: '대한민국 광주광역시', lat: 35.1595, lon: 126.8526, timezone: 'Asia/Seoul' },
-  { id: 'city_07', name: '부산', englishName: 'Busan', countryGroup: 'KR', region: '대한민국 부산광역시', lat: 35.1796, lon: 129.0756, timezone: 'Asia/Seoul' },
-  { id: 'city_08', name: '제주', englishName: 'Jeju', countryGroup: 'KR', region: '대한민국 제주특별자치도', lat: 33.4996, lon: 126.5312, timezone: 'Asia/Seoul' },
-  { id: 'city_09', name: '뉴욕', englishName: 'New York', countryGroup: 'INT', region: '미국 뉴욕', lat: 40.7128, lon: -74.006, timezone: 'America/New_York' },
-  { id: 'city_10', name: '도쿄', englishName: 'Tokyo', countryGroup: 'INT', region: '일본 도쿄', lat: 35.6762, lon: 139.6503, timezone: 'Asia/Tokyo' },
-  { id: 'city_11', name: '런던', englishName: 'London', countryGroup: 'INT', region: '영국 런던', lat: 51.5074, lon: -0.1278, timezone: 'Europe/London' },
-  { id: 'city_12', name: '파리', englishName: 'Paris', countryGroup: 'INT', region: '프랑스 파리', lat: 48.8566, lon: 2.3522, timezone: 'Europe/Paris' },
+  {
+    id: 'city_01',
+    name: '서울',
+    englishName: 'Seoul',
+    countryGroup: 'KR',
+    region: '대한민국 서울특별시',
+    lat: 37.5665,
+    lon: 126.978,
+    timezone: 'Asia/Seoul',
+  },
+  {
+    id: 'city_02',
+    name: '인천',
+    englishName: 'Incheon',
+    countryGroup: 'KR',
+    region: '대한민국 인천광역시',
+    lat: 37.4563,
+    lon: 126.7052,
+    timezone: 'Asia/Seoul',
+  },
+  {
+    id: 'city_03',
+    name: '수원',
+    englishName: 'Suwon',
+    countryGroup: 'KR',
+    region: '대한민국 경기도 수원시',
+    lat: 37.2636,
+    lon: 127.0286,
+    timezone: 'Asia/Seoul',
+  },
+  {
+    id: 'city_04',
+    name: '대전',
+    englishName: 'Daejeon',
+    countryGroup: 'KR',
+    region: '대한민국 대전광역시',
+    lat: 36.3504,
+    lon: 127.3845,
+    timezone: 'Asia/Seoul',
+  },
+  {
+    id: 'city_05',
+    name: '대구',
+    englishName: 'Daegu',
+    countryGroup: 'KR',
+    region: '대한민국 대구광역시',
+    lat: 35.8714,
+    lon: 128.6014,
+    timezone: 'Asia/Seoul',
+  },
+  {
+    id: 'city_06',
+    name: '광주',
+    englishName: 'Gwangju',
+    countryGroup: 'KR',
+    region: '대한민국 광주광역시',
+    lat: 35.1595,
+    lon: 126.8526,
+    timezone: 'Asia/Seoul',
+  },
+  {
+    id: 'city_07',
+    name: '부산',
+    englishName: 'Busan',
+    countryGroup: 'KR',
+    region: '대한민국 부산광역시',
+    lat: 35.1796,
+    lon: 129.0756,
+    timezone: 'Asia/Seoul',
+  },
+  {
+    id: 'city_08',
+    name: '제주',
+    englishName: 'Jeju',
+    countryGroup: 'KR',
+    region: '대한민국 제주특별자치도',
+    lat: 33.4996,
+    lon: 126.5312,
+    timezone: 'Asia/Seoul',
+  },
+  {
+    id: 'city_09',
+    name: '뉴욕',
+    englishName: 'New York',
+    countryGroup: 'INT',
+    region: '미국 뉴욕',
+    lat: 40.7128,
+    lon: -74.006,
+    timezone: 'America/New_York',
+  },
+  {
+    id: 'city_10',
+    name: '도쿄',
+    englishName: 'Tokyo',
+    countryGroup: 'INT',
+    region: '일본 도쿄',
+    lat: 35.6762,
+    lon: 139.6503,
+    timezone: 'Asia/Tokyo',
+  },
+  {
+    id: 'city_11',
+    name: '런던',
+    englishName: 'London',
+    countryGroup: 'INT',
+    region: '영국 런던',
+    lat: 51.5074,
+    lon: -0.1278,
+    timezone: 'Europe/London',
+  },
+  {
+    id: 'city_12',
+    name: '파리',
+    englishName: 'Paris',
+    countryGroup: 'INT',
+    region: '프랑스 파리',
+    lat: 48.8566,
+    lon: 2.3522,
+    timezone: 'Europe/Paris',
+  },
 ]
 
 /**
@@ -71,12 +179,30 @@ export const decodeWeather = (code, isDay = true) => {
 }
 
 const GRADIENTS = {
-  clear: ['linear-gradient(175deg,#3d8fd4 0%,#5eaee6 45%,#9ed3f0 100%)', 'linear-gradient(175deg,#16244a 0%,#223463 50%,#3a5183 100%)'],
-  cloud: ['linear-gradient(175deg,#63819f 0%,#8aa2ba 50%,#b3c5d4 100%)', 'linear-gradient(175deg,#232d3c 0%,#354254 50%,#4f5f74 100%)'],
-  rain: ['linear-gradient(175deg,#44596c 0%,#61798e 50%,#8aa1b3 100%)', 'linear-gradient(175deg,#19212b 0%,#293744 50%,#405161 100%)'],
-  snow: ['linear-gradient(175deg,#748ca4 0%,#9db2c6 50%,#cbd9e5 100%)', 'linear-gradient(175deg,#242d3a 0%,#374556 50%,#57687c 100%)'],
-  storm: ['linear-gradient(175deg,#2f3a49 0%,#455263 50%,#606f85 100%)', 'linear-gradient(175deg,#11161d 0%,#1e2632 50%,#313c4a 100%)'],
-  fog: ['linear-gradient(175deg,#78848f 0%,#98a5b1 50%,#c0cad3 100%)', 'linear-gradient(175deg,#212730 0%,#333a44 50%,#4a535e 100%)'],
+  clear: [
+    'linear-gradient(175deg,#3d8fd4 0%,#5eaee6 45%,#9ed3f0 100%)',
+    'linear-gradient(175deg,#16244a 0%,#223463 50%,#3a5183 100%)',
+  ],
+  cloud: [
+    'linear-gradient(175deg,#63819f 0%,#8aa2ba 50%,#b3c5d4 100%)',
+    'linear-gradient(175deg,#232d3c 0%,#354254 50%,#4f5f74 100%)',
+  ],
+  rain: [
+    'linear-gradient(175deg,#44596c 0%,#61798e 50%,#8aa1b3 100%)',
+    'linear-gradient(175deg,#19212b 0%,#293744 50%,#405161 100%)',
+  ],
+  snow: [
+    'linear-gradient(175deg,#748ca4 0%,#9db2c6 50%,#cbd9e5 100%)',
+    'linear-gradient(175deg,#242d3a 0%,#374556 50%,#57687c 100%)',
+  ],
+  storm: [
+    'linear-gradient(175deg,#2f3a49 0%,#455263 50%,#606f85 100%)',
+    'linear-gradient(175deg,#11161d 0%,#1e2632 50%,#313c4a 100%)',
+  ],
+  fog: [
+    'linear-gradient(175deg,#78848f 0%,#98a5b1 50%,#c0cad3 100%)',
+    'linear-gradient(175deg,#212730 0%,#333a44 50%,#4a535e 100%)',
+  ],
 }
 
 export const weatherGradient = (group, isDay = true) => {
@@ -131,7 +257,8 @@ export const fetchCurrentWeather = async () => {
   const params = new URLSearchParams({
     latitude: CITIES.map((c) => c.lat).join(','),
     longitude: CITIES.map((c) => c.lon).join(','),
-    current: 'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,is_day',
+    current:
+      'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,is_day',
     daily: 'temperature_2m_max,temperature_2m_min',
     // 강수확률은 current에 없고 hourly에만 있습니다.
     // forecast_hours=1 로 "지금 이 시각" 1개만 받아 지구본 강수 레이어에 씁니다.
@@ -209,9 +336,12 @@ export const fetchCityForecast = async (cityId) => {
   const params = new URLSearchParams({
     latitude: String(city.lat),
     longitude: String(city.lon),
-    current: 'temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m',
-    hourly: 'temperature_2m,precipitation_probability,precipitation,weather_code,visibility,dew_point_2m,is_day',
-    daily: 'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,daylight_duration,uv_index_max,precipitation_probability_max,wind_speed_10m_max',
+    current:
+      'temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m',
+    hourly:
+      'temperature_2m,precipitation_probability,precipitation,weather_code,visibility,dew_point_2m,is_day',
+    daily:
+      'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,daylight_duration,uv_index_max,precipitation_probability_max,wind_speed_10m_max',
     timezone: 'auto',
     forecast_days: '10',
     wind_speed_unit: 'ms', // 화면 표기(m/s)와 단위를 일치시킵니다
@@ -237,13 +367,14 @@ export const fetchCityForecast = async (cityId) => {
     const hourDate = new Date(timeStr)
     // formatToParts로 "시" 같은 locale 표기를 뺀 순수 숫자만 뽑습니다.
     // (ko-KR로 그냥 포맷하면 "13시"가 나와 뒤에 '시'를 붙일 때 "13시시"가 됩니다)
-    const formattedHour = new Intl.DateTimeFormat('ko-KR', {
-      timeZone: data.timezone || city.timezone,
-      hour: 'numeric',
-      hour12: false,
-    })
-      .formatToParts(hourDate)
-      .find((part) => part.type === 'hour')?.value ?? '--'
+    const formattedHour =
+      new Intl.DateTimeFormat('ko-KR', {
+        timeZone: data.timezone || city.timezone,
+        hour: 'numeric',
+        hour12: false,
+      })
+        .formatToParts(hourDate)
+        .find((part) => part.type === 'hour')?.value ?? '--'
 
     return {
       time: timeStr,
@@ -330,4 +461,3 @@ export const fetchCityForecast = async (cityId) => {
     daily,
   }
 }
-

@@ -263,7 +263,9 @@ export function useGlobe() {
        */
       .polygonAltitude(0.012)
       .polygonsTransitionDuration(0)
-      .polygonLabel((feat) => `<div class="globe-country-label">${feat.properties?.name ?? ''}</div>`)
+      .polygonLabel(
+        (feat) => `<div class="globe-country-label">${feat.properties?.name ?? ''}</div>`,
+      )
 
     // 4. 초기 카메라 시점 (한반도 중심)
     globe.pointOfView({ lat: 36, lng: 128, altitude: 2.2 })
@@ -499,11 +501,7 @@ export function useGlobe() {
       const texture = new THREE.CanvasTexture(canvas)
       texture.colorSpace = THREE.SRGBColorSpace
 
-      const geometry = new THREE.SphereGeometry(
-        globe.getGlobeRadius() * config.altitude,
-        64,
-        64,
-      )
+      const geometry = new THREE.SphereGeometry(globe.getGlobeRadius() * config.altitude, 64, 64)
       const material = new THREE.MeshBasicMaterial({
         map: texture,
         transparent: true,

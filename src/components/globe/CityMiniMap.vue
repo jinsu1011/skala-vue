@@ -51,8 +51,7 @@ const initMap = () => {
     maxZoom: 19,
     attribution: '© OpenStreetMap',
     // 타일을 못 받았을 때 깨진 이미지 아이콘 대신 투명 픽셀을 씁니다
-    errorTileUrl:
-      'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+    errorTileUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
   })
 
   tileLayer.on('tileerror', () => {

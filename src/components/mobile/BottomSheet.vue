@@ -191,11 +191,7 @@ defineExpose({ open, close, isMobile })
   <!-- 📱 모바일: 드래그 가능한 Bottom Sheet -->
   <div v-if="isMobile" class="sheet-root">
     <!-- 시트가 열려 있을 때 뒤 배경을 어둡게 (탭하면 닫힘) -->
-    <div
-      v-if="snapState !== SNAP.peek"
-      class="sheet-backdrop"
-      @click="snapState = SNAP.peek"
-    ></div>
+    <div v-if="snapState !== SNAP.peek" class="sheet-backdrop" @click="snapState = SNAP.peek"></div>
 
     <section class="bottom-sheet" :class="`state-${snapState}`" :style="sheetStyle">
       <!-- 드래그 손잡이 영역 -->

@@ -31,7 +31,12 @@ export function useWeatherBriefing(weatherSource) {
     { min: 11, phrase: '선선한', text: '선선해요. 얇은 겉옷 하나면 충분합니다', emoji: '🧥' },
     { min: 5, phrase: '쌀쌀한', text: '쌀쌀합니다. 자켓이나 니트를 챙기세요', emoji: '🧣' },
     { min: -5, phrase: '추운', text: '춥습니다. 두꺼운 외투와 목도리를 꼭 챙기세요', emoji: '🥶' },
-    { min: -100, phrase: '매우 추운', text: '강추위입니다. 실외 활동은 짧게, 방한에 신경 쓰세요', emoji: '❄️' },
+    {
+      min: -100,
+      phrase: '매우 추운',
+      text: '강추위입니다. 실외 활동은 짧게, 방한에 신경 쓰세요',
+      emoji: '❄️',
+    },
   ]
 
   /** 소수점을 없앤 정수 기온 (문장에 쓰기 좋게) */
@@ -103,7 +108,10 @@ export function useWeatherBriefing(weatherSource) {
 
     // 4) 뇌우는 확률과 별개로 항상 강조
     if (w.group === 'storm') {
-      list.push({ icon: '⛈️', text: '천둥·번개가 예보되어 있어요. 야외 활동은 미루는 게 좋습니다.' })
+      list.push({
+        icon: '⛈️',
+        text: '천둥·번개가 예보되어 있어요. 야외 활동은 미루는 게 좋습니다.',
+      })
     }
 
     // 5) 바람 (m/s 기준 — 기상청 강풍주의보는 14m/s 내외)
@@ -117,21 +125,30 @@ export function useWeatherBriefing(weatherSource) {
     if (uv >= 11) {
       list.push({ icon: '🛑', text: `자외선 지수 ${uv}(위험). 한낮에는 그늘에 머무르세요.` })
     } else if (uv >= 8) {
-      list.push({ icon: '🕶️', text: `자외선 지수가 ${uv}로 매우 높아요. 선크림과 선글라스는 필수!` })
+      list.push({
+        icon: '🕶️',
+        text: `자외선 지수가 ${uv}로 매우 높아요. 선크림과 선글라스는 필수!`,
+      })
     } else if (uv >= 6) {
       list.push({ icon: '🧴', text: `자외선 지수 ${uv}(높음). 선크림을 발라주세요.` })
     }
 
     // 7) 습도
     if (humidity >= 80 && feels >= 24) {
-      list.push({ icon: '🥵', text: `습도 ${humidity}%로 매우 눅눅해요. 통풍이 잘 되는 옷을 추천합니다.` })
+      list.push({
+        icon: '🥵',
+        text: `습도 ${humidity}%로 매우 눅눅해요. 통풍이 잘 되는 옷을 추천합니다.`,
+      })
     } else if (humidity > 0 && humidity <= 30) {
       list.push({ icon: '🧴', text: `습도 ${humidity}%로 건조해요. 보습과 수분 섭취를 챙기세요.` })
     }
 
     // 8) 가시거리 (안개)
     if (w.visibility !== undefined && w.visibility < 1) {
-      list.push({ icon: '🌫️', text: `가시거리가 ${w.visibility}km로 짧습니다. 운전 시 감속하세요.` })
+      list.push({
+        icon: '🌫️',
+        text: `가시거리가 ${w.visibility}km로 짧습니다. 운전 시 감속하세요.`,
+      })
     }
 
     // 9) 일교차

@@ -2,6 +2,17 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { CITIES, FALLBACK_WEATHER, fetchCityForecast, weatherGradient } from '@/api/weatherApi'
+import { useConfigStore } from '@/stores/configStore'
+
+/*
+ * [실습 과제 p.209 - 요구사항 3] 상세 날씨에도 단위 설정 변경 적용
+ *  상단 UnitToggler 를 눌러 놓고 상세 페이지로 들어와도 값이 유지된다.
+ *  → 페이지를 갈아끼워도 Pinia 창고는 그대로 남아있기 때문. (props/provide 로는 불가능)
+ */
+const configStore = useConfigStore()
+
+// 섭씨 원본 → 현재 단위로 변환하는 짧은 별칭
+const t = (celsius) => configStore.convert(celsius)
 
 /*
  * ══════════════════════════════════════════════════════════════
@@ -174,10 +185,12 @@ const goBack = () => router.go(-1) // 브라우저 뒤로가기와 동일 (= rou
         <div class="sky-city">{{ cityDetail.name }}</div>
         <div class="sky-region">{{ cityDetail.region }}</div>
 
-        <div class="sky-temp">{{ Math.round(cityDetail.temp) }}<span class="deg">°</span></div>
+        <div class="sky-temp">
+          {{ t(cityDetail.temp) }}<span class="deg">{{ configStore.unitSymbol }}</span>
+        </div>
         <div class="sky-status">{{ cityDetail.icon }} {{ cityDetail.status }}</div>
         <div class="sky-range">
-          최고 {{ cityDetail.tempMax }}° · 최저 {{ cityDetail.tempMin }}°
+          최고 {{ t(cityDetail.tempMax) }}° · 최저 {{ t(cityDetail.tempMin) }}°
         </div>
 
         <p v-if="cityDetail.comment" class="sky-comment">💬 {{ cityDetail.comment }}</p>
@@ -190,7 +203,8 @@ const goBack = () => router.go(-1) // 브라우저 뒤로가기와 동일 (= rou
               <span class="hour-label">{{ hour.label }}</span>
               <span class="hour-pop" :class="{ dim: hour.pop < 20 }">{{ hour.pop }}%</span>
               <span class="hour-icon">{{ hour.icon }}</span>
-              <span class="hour-temp" :style="hourOffset(hour.temp)">{{ hour.temp }}°</span>
+              <!-- 막대 위치(hourOffset)는 섭씨 원본으로 계산하고, 글자만 단위 변환한다 -->
+              <span class="hour-temp" :style="hourOffset(hour.temp)">{{ t(hour.temp) }}°</span>
             </div>
           </div>
         </div>
@@ -202,9 +216,9 @@ const goBack = () => router.go(-1) // 브라우저 뒤로가기와 동일 (= rou
             <span class="day-label">{{ day.label }}</span>
             <span class="day-icon">{{ day.icon }}</span>
             <span class="day-pop" :class="{ dim: day.pop < 20 }">{{ day.pop }}%</span>
-            <span class="day-min">{{ day.min }}°</span>
+            <span class="day-min">{{ t(day.min) }}°</span>
             <span class="day-track"><i class="day-bar" :style="barStyle(day)"></i></span>
-            <span class="day-max">{{ day.max }}°</span>
+            <span class="day-max">{{ t(day.max) }}°</span>
           </div>
         </div>
       </section>
@@ -213,7 +227,7 @@ const goBack = () => router.go(-1) // 브라우저 뒤로가기와 동일 (= rou
       <section class="metrics">
         <div class="metric">
           <span class="m-label">체감 온도</span>
-          <span class="m-value">{{ cityDetail.feelsLike }}°</span>
+          <span class="m-value">{{ t(cityDetail.feelsLike) }}°</span>
         </div>
         <div class="metric">
           <span class="m-label">대기 습도</span>
@@ -237,7 +251,9 @@ const goBack = () => router.go(-1) // 브라우저 뒤로가기와 동일 (= rou
         </div>
         <div class="metric">
           <span class="m-label">자외선</span>
-          <span class="m-value">{{ cityDetail.uv }}<small>{{ uvLabel }}</small></span>
+          <span class="m-value"
+            >{{ cityDetail.uv }}<small>{{ uvLabel }}</small></span
+          >
         </div>
         <div class="metric">
           <span class="m-label">관측 지역</span>
@@ -265,7 +281,8 @@ const goBack = () => router.go(-1) // 브라우저 뒤로가기와 동일 (= rou
     <section v-else class="unknown-city">
       <div class="unknown-icon">🧭</div>
       <p class="unknown-title">
-        '<strong>{{ route.params.cityId }}</strong>' 관측 정보가 없습니다.
+        '<strong>{{ route.params.cityId }}</strong
+        >' 관측 정보가 없습니다.
       </p>
       <p class="unknown-sub">등록된 도시 코드는 city_01 ~ city_08 입니다.</p>
       <div class="chips center">

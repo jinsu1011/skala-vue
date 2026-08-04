@@ -57,14 +57,21 @@ import PropsEmitsParent from '@/components/practices/basic/PropsEmitsParent.vue'
 import SlotDefaultParent from '@/components/practices/basic/SlotDefaultParent.vue'
 import SlotNamedParent from '@/components/practices/basic/SlotNamedParent.vue'
 import SlotScopedParent from '@/components/practices/basic/SlotScopedParent.vue'
+
+// [Code Challenge p.190] Pinia Store (counter.js)
+import StoreCounter from '@/components/practices/library/StoreCounter.vue'
+
+// [Code Challenge p.208] Axios — Weather Example / JSON Example
+import AxiosWeather from '@/components/practices/library/AxiosWeather.vue'
+import AxiosJson from '@/components/practices/library/AxiosJson.vue'
 </script>
 
 <template>
   <div class="practice-archive">
-    <h2>📚 이전 실습 모음 (p.54 ~ p.157)</h2>
+    <h2>📚 이전 실습 모음 (p.54 ~ p.208)</h2>
     <p class="desc">
-      App.vue 에 쌓아두었던 Code Challenge 결과물입니다. 이제 <code>/practices</code> 주소로 분리되어
-      필요할 때만 Lazy Loading 됩니다.
+      App.vue 에 쌓아두었던 Code Challenge 결과물입니다. 이제 <code>/practices</code> 주소로
+      분리되어 필요할 때만 Lazy Loading 됩니다.
     </p>
 
     <SampleOne />
@@ -112,6 +119,13 @@ import SlotScopedParent from '@/components/practices/basic/SlotScopedParent.vue'
     <SlotDefaultParent />
     <SlotNamedParent />
     <SlotScopedParent />
+
+    <!-- p.190 Pinia Store -->
+    <StoreCounter />
+
+    <!-- p.208 Axios -->
+    <AxiosWeather />
+    <AxiosJson />
   </div>
 </template>
 

@@ -23,7 +23,9 @@ if (import.meta.env.DEV && 'serviceWorker' in navigator) {
     .then((registrations) => {
       registrations.forEach((registration) => registration.unregister())
       if (registrations.length > 0) {
-        console.info('[개발] 남아 있던 서비스 워커를 정리했습니다. 새로고침하면 최신 코드가 뜹니다.')
+        console.info(
+          '[개발] 남아 있던 서비스 워커를 정리했습니다. 새로고침하면 최신 코드가 뜹니다.',
+        )
       }
     })
     .catch(() => {

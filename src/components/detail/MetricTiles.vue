@@ -66,7 +66,9 @@ const uvInfo = computed(() => {
         <span class="tile-title">습도</span>
       </div>
       <div class="tile-val">{{ weather.humidity }}%</div>
-      <div class="tile-desc">현재 이슬점은 {{ weatherStore.convertTemp(weather.dewPoint) }}° 입니다.</div>
+      <div class="tile-desc">
+        현재 이슬점은 {{ weatherStore.convertTemp(weather.dewPoint) }}° 입니다.
+      </div>
     </div>
 
     <!-- 3. 바람 및 풍향 -->
@@ -95,7 +97,9 @@ const uvInfo = computed(() => {
         <span class="tile-icon">☀️</span>
         <span class="tile-title">자외선 지수</span>
       </div>
-      <div class="tile-val">{{ uvInfo.val }} <span class="sub-label">{{ uvInfo.label }}</span></div>
+      <div class="tile-val">
+        {{ uvInfo.val }} <span class="sub-label">{{ uvInfo.label }}</span>
+      </div>
       <div class="uv-gauge-bg">
         <div
           class="uv-gauge-fill"

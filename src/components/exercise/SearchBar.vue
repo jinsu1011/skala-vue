@@ -40,7 +40,9 @@ const clearQuery = () => {
     </div>
 
     <p v-if="query" class="search-status">
-      '<strong>{{ query }}</strong>' 검색 결과 <strong>{{ resultCount }}</strong>건
+      '<strong>{{ query }}</strong
+      >' 검색 결과 <strong>{{ resultCount }}</strong
+      >건
     </p>
   </div>
 </template>

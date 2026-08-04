@@ -175,82 +175,82 @@ const dynamicBackground = computed(() => {
 
       <div ref="detailSectionRef" class="detail-panels-wrapper fade-in-panel">
         <!-- ② 현재 도시 헤더 요약 카드 -->
-      <section class="city-summary-section">
-        <div class="glass-card hero-summary-card">
-          <!-- Fallback 뱃지 -->
-          <div v-if="weatherStore.isFallback" class="fallback-badge">
-            ○ 예시 데이터 (네트워크 상태 확인)
-          </div>
+        <section class="city-summary-section">
+          <div class="glass-card hero-summary-card">
+            <!-- Fallback 뱃지 -->
+            <div v-if="weatherStore.isFallback" class="fallback-badge">
+              ○ 예시 데이터 (네트워크 상태 확인)
+            </div>
 
-          <!-- ⭐ 즐겨찾기 토글 (카드 우측 상단) -->
-          <FavoriteButton :city-id="detailWeather.id" class="hero-fav-btn" />
+            <!-- ⭐ 즐겨찾기 토글 (카드 우측 상단) -->
+            <FavoriteButton :city-id="detailWeather.id" class="hero-fav-btn" />
 
-          <div class="hero-top-info">
-            <h1 class="hero-city-name">{{ detailWeather.name }}</h1>
-            <p class="hero-region">{{ detailWeather.region }}</p>
-            <p v-if="detailWeather.countryGroup === 'INT'" class="local-time-badge">
-              🕒 현지 시각 {{ detailWeather.localTime }}
-            </p>
-          </div>
+            <div class="hero-top-info">
+              <h1 class="hero-city-name">{{ detailWeather.name }}</h1>
+              <p class="hero-region">{{ detailWeather.region }}</p>
+              <p v-if="detailWeather.countryGroup === 'INT'" class="local-time-badge">
+                🕒 현지 시각 {{ detailWeather.localTime }}
+              </p>
+            </div>
 
-          <div class="hero-temp-row">
-            <span class="hero-icon">{{ detailWeather.icon }}</span>
-            <div class="hero-temp">
-              {{ weatherStore.convertTemp(detailWeather.temp)
-              }}<span class="unit-sym">{{ weatherStore.unitSymbol }}</span>
+            <div class="hero-temp-row">
+              <span class="hero-icon">{{ detailWeather.icon }}</span>
+              <div class="hero-temp">
+                {{ weatherStore.convertTemp(detailWeather.temp)
+                }}<span class="unit-sym">{{ weatherStore.unitSymbol }}</span>
+              </div>
+            </div>
+
+            <p class="hero-status">{{ detailWeather.status }}</p>
+
+            <div class="hero-range-row">
+              <span>최고 {{ weatherStore.convertTemp(detailWeather.tempMax) }}°</span>
+              <span class="dot-sep">·</span>
+              <span>최저 {{ weatherStore.convertTemp(detailWeather.tempMin) }}°</span>
             </div>
           </div>
 
-          <p class="hero-status">{{ detailWeather.status }}</p>
+          <!-- ② 2D Leaflet 지도 카드 -->
+          <CityMiniMap
+            v-if="selectedCity"
+            :city="selectedCity"
+            :weather="detailWeather"
+            class="hero-map-card"
+          />
+        </section>
 
-          <div class="hero-range-row">
-            <span>최고 {{ weatherStore.convertTemp(detailWeather.tempMax) }}°</span>
-            <span class="dot-sep">·</span>
-            <span>최저 {{ weatherStore.convertTemp(detailWeather.tempMin) }}°</span>
-          </div>
-        </div>
+        <!-- 🤖 AI 날씨 요약 브리핑 (오늘의 외출 팁) -->
+        <WeatherBriefing :weather="detailWeather" />
 
-        <!-- ② 2D Leaflet 지도 카드 -->
-        <CityMiniMap
-          v-if="selectedCity"
-          :city="selectedCity"
-          :weather="detailWeather"
-          class="hero-map-card"
-        />
-      </section>
-
-      <!-- 🤖 AI 날씨 요약 브리핑 (오늘의 외출 팁) -->
-      <WeatherBriefing :weather="detailWeather" />
-
-      <!-- ③ 상세 예보 4종 (시간별 / 주간 / 일출호 / 지표타일) -->
-      <section class="detailed-forecast-section">
-        <!-- 24시간 가로 스크롤 -->
-        <HourlyStrip
-          :hourly="detailWeather.hourly"
-          :sunrise="detailWeather.sunrise"
-          :sunset="detailWeather.sunset"
-        />
-
-        <div class="two-col-grid">
-          <!-- 10일 온도 범위 막대 -->
-          <WeeklyChart :daily="detailWeather.daily" :current-temp="detailWeather.temp" />
-
-          <!-- SVG 일출/일몰 호 -->
-          <SunArc
+        <!-- ③ 상세 예보 4종 (시간별 / 주간 / 일출호 / 지표타일) -->
+        <section class="detailed-forecast-section">
+          <!-- 24시간 가로 스크롤 -->
+          <HourlyStrip
+            :hourly="detailWeather.hourly"
             :sunrise="detailWeather.sunrise"
             :sunset="detailWeather.sunset"
-            :daylight-text="detailWeather.daylightText"
-            :is-day="detailWeather.isDay"
           />
-        </div>
 
-        <!-- 8종 지표 타일 -->
-        <MetricTiles :weather="detailWeather" />
+          <div class="two-col-grid">
+            <!-- 10일 온도 범위 막대 -->
+            <WeeklyChart :daily="detailWeather.daily" :current-temp="detailWeather.temp" />
 
-        <!-- 출처 및 마지막 갱신 시각 -->
-        <footer class="weather-footer">
-          <span>출처: Open-Meteo · 마지막 갱신 {{ detailWeather.updatedAt }}</span>
-        </footer>
+            <!-- SVG 일출/일몰 호 -->
+            <SunArc
+              :sunrise="detailWeather.sunrise"
+              :sunset="detailWeather.sunset"
+              :daylight-text="detailWeather.daylightText"
+              :is-day="detailWeather.isDay"
+            />
+          </div>
+
+          <!-- 8종 지표 타일 -->
+          <MetricTiles :weather="detailWeather" />
+
+          <!-- 출처 및 마지막 갱신 시각 -->
+          <footer class="weather-footer">
+            <span>출처: Open-Meteo · 마지막 갱신 {{ detailWeather.updatedAt }}</span>
+          </footer>
         </section>
       </div>
     </BottomSheet>

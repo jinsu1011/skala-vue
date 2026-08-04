@@ -13,6 +13,9 @@
 import { computed, watch, onUnmounted } from 'vue'
 import { RouterLink, RouterView, useRoute } from 'vue-router'
 
+// [실습 과제 p.209 - 요구사항 2] Navigation Bar 옆에 UnitToggler 배치
+import UnitToggler from '@/components/exercise/UnitToggler.vue'
+
 /*
  * 🌍 지구본 화면은 "전체 화면(full-bleed)" 으로 보여야 한다.
  *
@@ -59,11 +62,16 @@ onUnmounted(() => {
         모든 반응형 데이터(ref, computed)를 초기화해 버린다. (강의자료 163p)
         <RouterLink> 는 그 새로고침을 가로채고 주소만 안전하게 바꾼다.
       -->
-      <nav class="app-nav">
-        <RouterLink to="/">날씨</RouterLink>
-        <RouterLink to="/about">소개</RouterLink>
-        <RouterLink to="/practices">실습</RouterLink>
-      </nav>
+      <div class="nav-zone">
+        <nav class="app-nav">
+          <RouterLink to="/">날씨</RouterLink>
+          <RouterLink to="/about">소개</RouterLink>
+          <RouterLink to="/practices">실습</RouterLink>
+        </nav>
+
+        <!-- ★ 단위 변경 버튼. Pinia 전역 상태라 어느 페이지에서 눌러도 값이 유지된다 -->
+        <UnitToggler />
+      </div>
     </header>
 
     <!--
@@ -113,6 +121,14 @@ onUnmounted(() => {
   font-size: 0.95rem;
   color: #1f2937;
   letter-spacing: -0.3px;
+}
+
+.nav-zone {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .app-nav {

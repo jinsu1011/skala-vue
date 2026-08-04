@@ -25,8 +25,8 @@ const goDashboard = () => {
     <h3>ℹ️ 서비스 소개</h3>
 
     <p class="intro">
-      본 앱은 <strong>Vue 3</strong> 및 <strong>Vue Router 4</strong> 기반으로 제작된 실습용 기상 관측
-      대시보드 시스템입니다.
+      본 앱은 <strong>Vue 3</strong> 및 <strong>Vue Router 4</strong> 기반으로 제작된 실습용 기상
+      관측 대시보드 시스템입니다.
     </p>
 
     <ul class="feature-list">

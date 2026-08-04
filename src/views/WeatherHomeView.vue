@@ -5,6 +5,7 @@ import BaseDashboardCard from '@/components/exercise/BaseDashboardCard.vue'
 import SearchBar from '@/components/exercise/SearchBar.vue'
 import WeatherCard from '@/components/exercise/WeatherCard.vue'
 import { FALLBACK_WEATHER, fetchCurrentWeather, weatherGradient } from '@/api/weatherApi'
+import { useConfigStore } from '@/stores/configStore'
 
 /*
  * ══════════════════════════════════════════════════════════════
@@ -50,17 +51,23 @@ const uiState = reactive({
   errorMessage: '',
 })
 
-/* ══════════ Provide / Inject — 온도 단위 (강의자료 150~151p) ══════════ */
-const tempUnit = ref('C')
+/* ══════════ [실습 과제 p.209 - 요구사항 3] 메인 날씨에 단위 설정 적용 ══════════
+ *
+ *  예전에는 이 View 가 tempUnit 을 직접 ref 로 들고 provide 했다.
+ *  이제 단위 버튼은 App.vue 의 내비게이션 바(UnitToggler)에 있으므로
+ *  '부모 → 자식' 통로인 provide 로는 값을 받을 수 없다.
+ *  → 전역 저장소(configStore)를 진짜 원본으로 삼고,
+ *    이미 inject 로 값을 받고 있는 WeatherCard 를 고치지 않기 위해
+ *    store 의 값을 그대로 provide 로 흘려보낸다. (강의자료 150p)
+ */
+const configStore = useConfigStore()
+
+// 'C' / 'F' 한 글자 표기. store 값이 바뀌면 자동으로 다시 계산된다.
+const tempUnit = computed(() => configStore.unitCode)
 provide('tempUnit', tempUnit)
 
-const toggleTempUnit = () => {
-  tempUnit.value = tempUnit.value === 'C' ? 'F' : 'C'
-}
-
-// 히어로의 기온도 같은 단위 규칙을 따른다
-const toUnit = (celsius) =>
-  tempUnit.value === 'F' ? Math.round(celsius * (9 / 5) + 32) : Math.round(celsius)
+// 히어로의 기온도 store 의 변환 규칙을 그대로 따른다
+const toUnit = (celsius) => configStore.convert(celsius)
 
 /* ══════════ 실시간 날씨 API 연동 (Open-Meteo) ══════════ */
 const loadWeather = async () => {
@@ -237,11 +244,16 @@ const todayLabel = new Date().toLocaleDateString('ko-KR', {
           </span>
         </h3>
         <div class="header-actions">
-          <button class="ghost-btn" type="button" :disabled="uiState.isLoading" @click="loadWeather">
+          <button
+            class="ghost-btn"
+            type="button"
+            :disabled="uiState.isLoading"
+            @click="loadWeather"
+          >
             {{ uiState.isLoading ? '조회 중…' : '↻ 새로고침' }}
           </button>
-          <!-- Provide 로 내려보낸 값을 토글 → 모든 WeatherCard 가 한 번에 반응 -->
-          <button class="ghost-btn" type="button" @click="toggleTempUnit">
+          <!-- 전역 store 를 토글 → 상단 UnitToggler 와 모든 WeatherCard 가 한 번에 반응 -->
+          <button class="ghost-btn" type="button" @click="configStore.toggleUnit">
             °{{ tempUnit }} → °{{ tempUnit === 'C' ? 'F' : 'C' }}
           </button>
           <button
