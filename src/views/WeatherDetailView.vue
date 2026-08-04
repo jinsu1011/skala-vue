@@ -201,7 +201,11 @@ const goBack = () => router.go(-1) // 브라우저 뒤로가기와 동일 (= rou
           <div class="hourly">
             <div v-for="hour in cityDetail.hourly" :key="hour.time" class="hour">
               <span class="hour-label">{{ hour.label }}</span>
-              <span class="hour-pop" :class="{ dim: hour.pop < 20 }">{{ hour.pop }}%</span>
+              <!-- 강수확률을 안 주는 API 면 그 자리를 강수량(mm)으로 대신 채운다 -->
+              <span v-if="hour.pop === null || hour.pop === undefined" class="hour-pop dim">
+                {{ hour.precipitation > 0 ? `${hour.precipitation}mm` : '—' }}
+              </span>
+              <span v-else class="hour-pop" :class="{ dim: hour.pop < 20 }">{{ hour.pop }}%</span>
               <span class="hour-icon">{{ hour.icon }}</span>
               <!-- 막대 위치(hourOffset)는 섭씨 원본으로 계산하고, 글자만 단위 변환한다 -->
               <span class="hour-temp" :style="hourOffset(hour.temp)">{{ t(hour.temp) }}°</span>
@@ -215,7 +219,8 @@ const goBack = () => router.go(-1) // 브라우저 뒤로가기와 동일 (= rou
           <div v-for="day in cityDetail.daily" :key="day.date" class="day-row">
             <span class="day-label">{{ day.label }}</span>
             <span class="day-icon">{{ day.icon }}</span>
-            <span class="day-pop" :class="{ dim: day.pop < 20 }">{{ day.pop }}%</span>
+            <span v-if="day.pop === null || day.pop === undefined" class="day-pop dim">—</span>
+            <span v-else class="day-pop" :class="{ dim: day.pop < 20 }">{{ day.pop }}%</span>
             <span class="day-min">{{ t(day.min) }}°</span>
             <span class="day-track"><i class="day-bar" :style="barStyle(day)"></i></span>
             <span class="day-max">{{ t(day.max) }}°</span>
@@ -239,7 +244,11 @@ const goBack = () => router.go(-1) // 브라우저 뒤로가기와 동일 (= rou
         </div>
         <div class="metric">
           <span class="m-label">강수 확률</span>
-          <span class="m-value">{{ cityDetail.pop }}%</span>
+          <!-- 제공하지 않는 API(MET Norway)일 때는 0% 가 아니라 '—' 로 정직하게 비운다 -->
+          <span class="m-value">
+            <template v-if="cityDetail.pop === null || cityDetail.pop === undefined">—</template>
+            <template v-else>{{ cityDetail.pop }}%</template>
+          </span>
         </div>
         <div class="metric">
           <span class="m-label">일출</span>

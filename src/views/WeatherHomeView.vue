@@ -4,7 +4,12 @@ import { useRoute, useRouter } from 'vue-router'
 import BaseDashboardCard from '@/components/exercise/BaseDashboardCard.vue'
 import SearchBar from '@/components/exercise/SearchBar.vue'
 import WeatherCard from '@/components/exercise/WeatherCard.vue'
-import { FALLBACK_WEATHER, fetchCurrentWeather, weatherGradient } from '@/api/weatherApi'
+import {
+  FALLBACK_WEATHER,
+  fetchCurrentWeather,
+  weatherGradient,
+  describeApiError,
+} from '@/api/weatherApi'
 import { useConfigStore } from '@/stores/configStore'
 
 /*
@@ -69,16 +74,24 @@ provide('tempUnit', tempUnit)
 // 히어로의 기온도 store 의 변환 규칙을 그대로 따른다
 const toUnit = (celsius) => configStore.convert(celsius)
 
-/* ══════════ 실시간 날씨 API 연동 (Open-Meteo) ══════════ */
+/* ══════════ 실시간 날씨 API 연동 (OpenWeatherMap → Open-Meteo) ══════════ */
+// 지금 화면에 뿌려진 값이 어느 API 에서 왔는지 표시용
+const SOURCE_NAMES = {
+  openweather: 'OpenWeatherMap',
+  'open-meteo': 'Open-Meteo',
+  'met.no': 'MET Norway',
+}
+const sourceLabel = computed(() => SOURCE_NAMES[weatherList.value[0]?.source] ?? '알 수 없음')
+
 const loadWeather = async () => {
   try {
     weatherList.value = await fetchCurrentWeather()
     uiState.isLive = true
     uiState.errorMessage = ''
   } catch (error) {
-    // 네트워크 단절/차단 시 초기 Mock 데이터를 그대로 쓴다
+    // 두 API 가 모두 실패했을 때만 여기로 온다 → 초기 Mock 데이터를 그대로 쓴다
     uiState.isLive = false
-    uiState.errorMessage = '실시간 조회 실패 — 예시 데이터로 표시 중'
+    uiState.errorMessage = `실시간 조회 실패 (${describeApiError(error)}) — 예시 데이터로 표시 중`
     console.warn('⚠️ 날씨 API 호출 실패, 폴백 데이터 사용:', error.message)
   } finally {
     uiState.isLoading = false
@@ -297,7 +310,7 @@ const todayLabel = new Date().toLocaleDateString('ko-KR', {
 
         <p v-if="uiState.errorMessage" class="api-error">⚠️ {{ uiState.errorMessage }}</p>
         <p class="meta">
-          {{ uiState.lastUpdated }} 기준<span v-if="uiState.isLive"> · 출처 Open-Meteo</span>
+          {{ uiState.lastUpdated }} 기준<span v-if="uiState.isLive"> · 출처 {{ sourceLabel }}</span>
         </p>
       </template>
     </BaseDashboardCard>

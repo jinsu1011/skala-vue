@@ -1,10 +1,24 @@
 /**
- * Open-Meteo 실시간 날씨 API 모듈
+ * ══════════════════════════════════════════════════════════════
+ *  날씨 API 모듈 — 실제 API 2개를 이중화해서 쓴다
+ * ══════════════════════════════════════════════════════════════
  *
- * - API 키가 필요 없다 → Public 저장소에 올려도 노출될 비밀값이 없음
- * - CORS 허용 → 브라우저에서 fetch 로 직접 호출 가능
- * - 문서: https://open-meteo.com/en/docs
+ *  1순위 OpenWeatherMap (강의자료 197~199p)
+ *    - 과제에서 지정한 API. 키가 필요하다 (.env.local 의 VITE_OPENWEATHER_KEY)
+ *    - 무료 분당 60회 / 월 100만회 → 실습 중에 한도가 찰 일이 거의 없다
+ *
+ *  2순위 Open-Meteo
+ *    - 키가 없어도 되는 대신 '하루 호출 한도' 가 있어서
+ *      많이 쓰면 429(Daily API request limit exceeded) 가 뜬다.
+ *      → 이때 화면이 '예시 데이터' 로 떨어지던 원인이었다.
+ *
+ *  3순위 MET Norway (노르웨이 기상청)
+ *    - 키도 없고 한도도 넉넉한 최후의 실 API.
+ *
+ *  셋 다 실패해야 비로소 FALLBACK_WEATHER(예시값) 를 쓴다.
  */
+import { hasOwmKey, owmFetchCurrentWeather, owmFetchCityForecast } from '@/api/openWeatherApi'
+import { metFetchCurrentWeather, metFetchCityForecast } from '@/api/metNoApi'
 
 const API_URL = 'https://api.open-meteo.com/v1/forecast'
 
@@ -253,7 +267,7 @@ const round1 = (v) => Math.round((v ?? 0) * 10) / 10
 /**
  * 12개 도시의 현재 기온 및 날씨 정보 (콤마 구분 다중 좌표 한 번에 호출)
  */
-export const fetchCurrentWeather = async () => {
+const meteoFetchCurrentWeather = async () => {
   const params = new URLSearchParams({
     latitude: CITIES.map((c) => c.lat).join(','),
     longitude: CITIES.map((c) => c.lon).join(','),
@@ -303,9 +317,41 @@ export const fetchCurrentWeather = async () => {
       cloudCover: current?.cloud_cover ?? 0, // 운량(%)
       isDay,
       isFallback: false,
+      source: 'open-meteo',
       ...decodeWeather(current?.weather_code, isDay),
     }
   })
+}
+
+/**
+ * ★ 화면이 실제로 호출하는 함수 — OpenWeatherMap 을 먼저 시도한다.
+ *   키가 없거나 OWM 이 실패하면 Open-Meteo 로 자동 전환한다.
+ */
+export const fetchCurrentWeather = async () => {
+  if (hasOwmKey()) {
+    try {
+      return await owmFetchCurrentWeather(CITIES)
+    } catch (error) {
+      console.warn('⚠️ OpenWeatherMap 실패 → Open-Meteo 로 전환:', describeApiError(error))
+    }
+  }
+
+  try {
+    return await meteoFetchCurrentWeather()
+  } catch (error) {
+    console.warn('⚠️ Open-Meteo 실패 → MET Norway 로 전환:', describeApiError(error))
+  }
+
+  return metFetchCurrentWeather(CITIES)
+}
+
+/** 통신 에러를 사람이 읽을 수 있는 한 줄로 바꾼다 */
+export const describeApiError = (error) => {
+  const status = error?.response?.status
+  if (status === 401) return 'OpenWeatherMap 키가 잘못됐거나 아직 활성화 전입니다 (401)'
+  if (status === 429) return '오늘 API 호출 한도를 초과했습니다 (429)'
+  if (status) return `API 응답 오류 ${status}`
+  return error?.message ?? '알 수 없는 오류'
 }
 
 const WEEKDAY = ['일', '월', '화', '수', '목', '금', '토']
@@ -333,6 +379,25 @@ export const fetchCityForecast = async (cityId) => {
   const city = CITIES.find((c) => c.id === cityId)
   if (!city) return null
 
+  // 목록과 똑같은 순서: OpenWeatherMap → Open-Meteo → MET Norway
+  if (hasOwmKey()) {
+    try {
+      return await owmFetchCityForecast(city)
+    } catch (error) {
+      console.warn('⚠️ OpenWeatherMap 상세 실패 → Open-Meteo 로 전환:', describeApiError(error))
+    }
+  }
+
+  try {
+    return await meteoFetchCityForecast(city)
+  } catch (error) {
+    console.warn('⚠️ Open-Meteo 상세 실패 → MET Norway 로 전환:', describeApiError(error))
+    return metFetchCityForecast(city)
+  }
+}
+
+/** Open-Meteo 로 도시 1곳의 상세 예보를 받아온다 */
+const meteoFetchCityForecast = async (city) => {
   const params = new URLSearchParams({
     latitude: String(city.lat),
     longitude: String(city.lon),
@@ -455,6 +520,7 @@ export const fetchCityForecast = async (cityId) => {
     sunsetISO: data.daily?.sunset?.[0],
     isDay,
     isFallback: false,
+    source: 'open-meteo',
     updatedAt: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
     ...decodeWeather(current?.weather_code, isDay),
     hourly,

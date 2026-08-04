@@ -1,13 +1,17 @@
 <script setup>
+import { ref } from 'vue'
 import { useWeatherStore } from '@/stores/weatherStore'
 import { useGeolocation } from '@/composables/useGeolocation'
 import CitySearchInput from './CitySearchInput.vue'
 import PwaInstallPrompt from '@/components/mobile/PwaInstallPrompt.vue'
+import SolarSystemModal from '@/components/solar/SolarSystemModal.vue'
 
 const emit = defineEmits(['select-city'])
 
 const weatherStore = useWeatherStore()
 const { geoState, errorMessage, getCurrentNearestCity } = useGeolocation()
+
+const isSolarModalOpen = ref(false)
 
 // 📍 GPS 내 위치 버튼 클릭
 const handleGPSClick = async () => {
@@ -31,8 +35,18 @@ const handleGPSClick = async () => {
       <CitySearchInput @select-city="(id) => emit('select-city', id)" />
     </div>
 
-    <!-- 우측 컨트롤 버튼들 (앱 설치 + GPS + 단위 토글) -->
+    <!-- 우측 컨트롤 버튼들 (태양계 + 앱 설치 + GPS + 단위 토글) -->
     <div class="controls-area">
+      <!-- ☀️ 태양계 표면온도 비교 버튼 -->
+      <button
+        class="solar-btn"
+        title="태양계 표면온도 비교 뷰"
+        @click="isSolarModalOpen = true"
+      >
+        <span class="solar-icon">☀️</span>
+        <span class="solar-text">태양계 온도</span>
+      </button>
+
       <!-- 📲 홈 화면에 추가 (PWA 설치) -->
       <PwaInstallPrompt />
 
@@ -61,6 +75,12 @@ const handleGPSClick = async () => {
     <div v-if="errorMessage" class="gps-error-toast">
       <span>ℹ️ {{ errorMessage }}</span>
     </div>
+
+    <!-- ☀️ 태양계 표면온도 모달 -->
+    <SolarSystemModal
+      :is-open="isSolarModalOpen"
+      @close="isSolarModalOpen = false"
+    />
   </header>
 </template>
 
@@ -107,6 +127,27 @@ const handleGPSClick = async () => {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.solar-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(250, 204, 21, 0.15);
+  border: 1px solid rgba(250, 204, 21, 0.4);
+  border-radius: 20px;
+  color: #fde047;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.solar-btn:hover {
+  background: rgba(250, 204, 21, 0.3);
+  border-color: #fde047;
+  transform: translateY(-1px);
 }
 
 .gps-btn {
@@ -192,7 +233,8 @@ const handleGPSClick = async () => {
   .logo-title {
     display: none;
   }
-  .gps-text {
+  .gps-text,
+  .solar-text {
     display: none;
   }
 }
