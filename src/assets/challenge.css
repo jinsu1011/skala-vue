@@ -1,0 +1,15 @@
+/* 외부 스타일 파일 - 여러 컴포넌트에서 공통으로 가져다 쓰는 디자인 뭉치 */
+
+.btn-external {
+  background-color: #42b883;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-external:hover {
+  background-color: #369870;
+}

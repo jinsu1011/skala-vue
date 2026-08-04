@@ -1,0 +1,57 @@
+@import './base.css';
+
+/*
+ * [과제 4] 실제 서비스처럼 보이도록 앱 전역 톤을 정리했다.
+ *
+ * base.css 에는 Vite 기본 템플릿의 다크모드 설정(@media prefers-color-scheme)이 들어 있어
+ * OS 를 다크모드로 쓰면 배경이 검게 뒤집힌다. 날씨 카드가 흰색 기준으로 디자인되어 있으므로
+ * 여기서 라이트 톤으로 고정한다.
+ */
+:root {
+  --color-background: #eef1f5;
+  --color-text: #1f2937;
+  --color-heading: #1f2937;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+/* Vite 기본 템플릿의 초록색 링크/2단 그리드 스타일은 사용하지 않는다 */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+#app {
+  max-width: 720px; /* 모바일 앱 느낌을 내기 위한 좁은 단 (네이버 날씨 모바일 폭) */
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+  font-weight: normal;
+}
+
+@media (min-width: 1024px) {
+  #app {
+    padding: 28px 16px 60px;
+  }
+}
+
+/*
+ * 🌍 3D 지구본 화면 전용 "전체 화면(full-bleed)" 모드
+ *
+ * App.vue 가 지구본 라우트일 때만 <body> 에 .globe-fullscreen class 를 붙인다.
+ * 그 순간에만 위의 폭 제한(720px)과 여백을 해제해
+ * 지구본이 브라우저 창을 100% 채우도록 만든다.
+ * (다른 실습 화면은 이 규칙에 영향을 받지 않는다)
+ */
+body.globe-fullscreen {
+  background: #020617;
+  overflow-x: hidden;
+}
+
+body.globe-fullscreen #app {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
