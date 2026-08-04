@@ -160,6 +160,40 @@ export function useSolarSystem() {
       planetMeshes.push({ mesh, data, angle: startAngle })
     })
 
+    // ── 히트 테스트: Raycaster 로 감지된 오브젝트 → 행성 찾기 ──
+    // 자식 Mesh (태양 glow, 토성 고리 등)를 클릭해도 부모 행성을 찾아준다.
+    const findPlanetFromHit = (hitObject) => {
+      for (const item of planetMeshes) {
+        if (item.mesh === hitObject || item.mesh === hitObject.parent) {
+          return item
+        }
+      }
+      return null
+    }
+
+    // ── 선택된 행성 강조 효과 ──
+    let prevSelectedId = null
+    const highlightSelected = (planetId) => {
+      // 이전 강조 해제
+      planetMeshes.forEach((item) => {
+        item.mesh.scale.set(1, 1, 1)
+        if (item.data.emissive) return
+        item.mesh.material.emissiveIntensity = 0.15
+      })
+
+      // 새로 선택된 행성 강조
+      if (planetId) {
+        const target = planetMeshes.find((p) => p.data.id === planetId)
+        if (target) {
+          target.mesh.scale.set(1.3, 1.3, 1.3)
+          if (!target.data.emissive) {
+            target.mesh.material.emissiveIntensity = 0.6
+          }
+        }
+      }
+      prevSelectedId = planetId
+    }
+
     // ── 클릭 감지 (드래그와 구분) ──
     const handleMouseDown = (event) => {
       mouseDownX = event.clientX
@@ -167,45 +201,44 @@ export function useSolarSystem() {
     }
 
     const handleMouseUp = (event) => {
-      // 마우스가 5px 이상 움직였으면 드래그 → 무시
       const dx = event.clientX - mouseDownX
       const dy = event.clientY - mouseDownY
       if (Math.sqrt(dx * dx + dy * dy) > 5) return
 
-      // 클릭으로 판정 → Raycaster 로 행성 감지
       const rect = renderer.domElement.getBoundingClientRect()
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
 
       raycaster.setFromCamera(mouse, camera)
-      const meshList = planetMeshes.map((p) => p.mesh)
-      const intersects = raycaster.intersectObjects(meshList)
+      // true = 자식 Mesh 까지 재귀 탐색 (고리, glow 등)
+      const allMeshes = planetMeshes.map((p) => p.mesh)
+      const intersects = raycaster.intersectObjects(allMeshes, true)
 
       if (intersects.length > 0) {
-        const planet = planetMeshes.find((p) => p.mesh === intersects[0].object)
+        const planet = findPlanetFromHit(intersects[0].object)
         if (planet) {
           if (planet.data.isEarth && onEarthClick) {
-            // 지구 → 기존 날씨 지구본으로 이동
             onEarthClick()
           } else {
-            // 다른 행성 → 정보 패널 표시 (토글)
             if (selectedPlanet.value && selectedPlanet.value.id === planet.data.id) {
-              selectedPlanet.value = null // 같은 행성 다시 클릭 → 닫기
+              selectedPlanet.value = null
+              highlightSelected(null)
             } else {
               selectedPlanet.value = planet.data
+              highlightSelected(planet.data.id)
             }
           }
         }
       } else {
-        // 빈 공간 클릭 → 패널 닫기
         selectedPlanet.value = null
+        highlightSelected(null)
       }
     }
 
     renderer.domElement.addEventListener('mousedown', handleMouseDown)
     renderer.domElement.addEventListener('mouseup', handleMouseUp)
 
-    // 터치 지원
+    // 터치
     renderer.domElement.addEventListener('touchstart', (e) => {
       if (e.touches.length === 1) {
         mouseDownX = e.touches[0].clientX
@@ -214,27 +247,26 @@ export function useSolarSystem() {
     })
     renderer.domElement.addEventListener('touchend', (e) => {
       if (e.changedTouches.length === 1) {
-        const fakeEvent = {
+        handleMouseUp({
           clientX: e.changedTouches[0].clientX,
           clientY: e.changedTouches[0].clientY,
-        }
-        handleMouseUp(fakeEvent)
+        })
       }
     })
 
-    // 마우스 호버
+    // 마우스 호버 → 커서 + 살짝 확대
     const handleMouseMove = (event) => {
       const rect = renderer.domElement.getBoundingClientRect()
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
 
       raycaster.setFromCamera(mouse, camera)
-      const meshList = planetMeshes.map((p) => p.mesh)
-      const intersects = raycaster.intersectObjects(meshList)
+      const allMeshes = planetMeshes.map((p) => p.mesh)
+      const intersects = raycaster.intersectObjects(allMeshes, true)
 
       if (intersects.length > 0) {
         renderer.domElement.style.cursor = 'pointer'
-        const planet = planetMeshes.find((p) => p.mesh === intersects[0].object)
+        const planet = findPlanetFromHit(intersects[0].object)
         hoveredPlanet.value = planet ? planet.data.id : null
       } else {
         renderer.domElement.style.cursor = 'grab'
@@ -251,6 +283,12 @@ export function useSolarSystem() {
     const animate = () => {
       animFrameId = requestAnimationFrame(animate)
       controls.update()
+
+      // 선택 상태 동기화
+      const curSelId = selectedPlanet.value ? selectedPlanet.value.id : null
+      if (curSelId !== prevSelectedId) {
+        highlightSelected(curSelId)
+      }
 
       const coords = []
 
