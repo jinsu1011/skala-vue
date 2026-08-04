@@ -4,7 +4,7 @@ import { useWeatherStore } from '@/stores/weatherStore'
 import { useGeolocation } from '@/composables/useGeolocation'
 import CitySearchInput from './CitySearchInput.vue'
 import PwaInstallPrompt from '@/components/mobile/PwaInstallPrompt.vue'
-import SolarSystemModal from '@/components/solar/SolarSystemModal.vue'
+import SolarSystem3DStage from '@/components/solar/SolarSystem3DStage.vue'
 
 const emit = defineEmits(['select-city'])
 
@@ -76,8 +76,8 @@ const handleGPSClick = async () => {
       <span>ℹ️ {{ errorMessage }}</span>
     </div>
 
-    <!-- ☀️ 태양계 표면온도 모달 -->
-    <SolarSystemModal
+    <!-- ☀️ 3D 태양계 표면온도 그래픽 스테이지 -->
+    <SolarSystem3DStage
       :is-open="isSolarModalOpen"
       @close="isSolarModalOpen = false"
     />
