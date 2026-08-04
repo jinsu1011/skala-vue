@@ -22,9 +22,6 @@ export function useSolarSystem() {
   const raycaster = new THREE.Raycaster()
   const mouse = new THREE.Vector2()
 
-  // 드래그 vs 클릭 구분용
-  let mouseDownX = 0
-  let mouseDownY = 0
 
   const planetMeshes = []
   const labelCoords = ref([])
@@ -194,23 +191,33 @@ export function useSolarSystem() {
       prevSelectedId = planetId
     }
 
-    // ── 클릭 감지 (드래그와 구분) ──
-    const handleMouseDown = (event) => {
-      mouseDownX = event.clientX
-      mouseDownY = event.clientY
+    // ── 클릭 감지 (안정화) ──
+    // 포인터 이벤트로 마우스 + 터치 통합 처리
+    // 조건: 이동 거리 10px 이내 AND 누른 시간 500ms 이내 → "클릭"
+    let pointerDownX = 0
+    let pointerDownY = 0
+    let pointerDownTime = 0
+
+    const onPointerDown = (event) => {
+      pointerDownX = event.clientX
+      pointerDownY = event.clientY
+      pointerDownTime = Date.now()
     }
 
-    const handleMouseUp = (event) => {
-      const dx = event.clientX - mouseDownX
-      const dy = event.clientY - mouseDownY
-      if (Math.sqrt(dx * dx + dy * dy) > 5) return
+    const onPointerUp = (event) => {
+      const dx = event.clientX - pointerDownX
+      const dy = event.clientY - pointerDownY
+      const dist = Math.sqrt(dx * dx + dy * dy)
+      const elapsed = Date.now() - pointerDownTime
+
+      // 10px 넘게 움직였거나 500ms 넘게 누르고 있었으면 드래그 → 무시
+      if (dist > 10 || elapsed > 500) return
 
       const rect = renderer.domElement.getBoundingClientRect()
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
 
       raycaster.setFromCamera(mouse, camera)
-      // true = 자식 Mesh 까지 재귀 탐색 (고리, glow 등)
       const allMeshes = planetMeshes.map((p) => p.mesh)
       const intersects = raycaster.intersectObjects(allMeshes, true)
 
@@ -235,24 +242,8 @@ export function useSolarSystem() {
       }
     }
 
-    renderer.domElement.addEventListener('mousedown', handleMouseDown)
-    renderer.domElement.addEventListener('mouseup', handleMouseUp)
-
-    // 터치
-    renderer.domElement.addEventListener('touchstart', (e) => {
-      if (e.touches.length === 1) {
-        mouseDownX = e.touches[0].clientX
-        mouseDownY = e.touches[0].clientY
-      }
-    })
-    renderer.domElement.addEventListener('touchend', (e) => {
-      if (e.changedTouches.length === 1) {
-        handleMouseUp({
-          clientX: e.changedTouches[0].clientX,
-          clientY: e.changedTouches[0].clientY,
-        })
-      }
-    })
+    renderer.domElement.addEventListener('pointerdown', onPointerDown)
+    renderer.domElement.addEventListener('pointerup', onPointerUp)
 
     // 마우스 호버 → 커서 + 살짝 확대
     const handleMouseMove = (event) => {
