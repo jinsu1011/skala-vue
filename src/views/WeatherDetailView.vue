@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { CITIES, FALLBACK_WEATHER, fetchCityForecast, weatherGradient } from '@/api/weatherApi'
 import { useConfigStore } from '@/stores/configStore'
+import { getLandmark } from '@/data/landmarkData'
 
 /*
  * [실습 과제 p.209 - 요구사항 3] 상세 날씨에도 단위 설정 변경 적용
@@ -167,6 +168,12 @@ const uvLabel = computed(() => {
 // Programmatic Navigation — 스크립트로 페이지 이동 (강의자료 171p)
 const goHome = () => router.push('/') // 히스토리에 쌓으며 메인으로
 const goBack = () => router.go(-1) // 브라우저 뒤로가기와 동일 (= router.back())
+
+// 랜드마크 이미지 (해외 도시만)
+const landmark = computed(() => {
+  if (!cityDetail.value) return null
+  return getLandmark(cityDetail.value.id)
+})
 </script>
 
 <template>
@@ -194,6 +201,12 @@ const goBack = () => router.go(-1) // 브라우저 뒤로가기와 동일 (= rou
         </div>
 
         <p v-if="cityDetail.comment" class="sky-comment">💬 {{ cityDetail.comment }}</p>
+
+        <!-- 🏛️ 랜드마크 이미지 -->
+        <div v-if="landmark && landmark.image" class="landmark-card">
+          <img :src="landmark.image" :alt="landmark.name" class="landmark-img" />
+          <span class="landmark-name">{{ landmark.name }}</span>
+        </div>
 
         <!-- ② 시간별 예보 (가로 스크롤) -->
         <div v-if="cityDetail.hourly.length" class="panel">
@@ -390,6 +403,33 @@ const goBack = () => router.go(-1) // 브라우저 뒤로가기와 동일 (= rou
   opacity: 0.9;
   text-align: center;
   line-height: 1.5;
+}
+
+/* ═══════ 랜드마크 카드 ═══════ */
+.landmark-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 14px auto 0;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  max-width: 280px;
+}
+.landmark-img {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+.landmark-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #fff;
+  opacity: 0.92;
 }
 
 /* ═══════ 패널 (시간별 / 주간) ═══════ */
