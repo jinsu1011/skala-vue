@@ -22,7 +22,6 @@ export function useSolarSystem() {
   const raycaster = new THREE.Raycaster()
   const mouse = new THREE.Vector2()
 
-
   const planetMeshes = []
   const labelCoords = ref([])
   const hoveredPlanet = ref(null)
@@ -211,7 +210,6 @@ export function useSolarSystem() {
       }
       return null
     }
-
 
     // ── 클릭 감지 (안정화) ──
     // 포인터 이벤트로 마우스 + 터치 통합 처리

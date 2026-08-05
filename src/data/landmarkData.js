@@ -84,6 +84,49 @@ export const LANDMARKS = {
     model: 'hollywoodSign',
     scale: 0.58,
   },
+  city_17: {
+    name: '피사의 사탑 & 콜로세움',
+    nameEn: 'Tower of Pisa & Colosseum',
+    model: 'pisaTower',
+    scale: 0.62,
+  },
+  city_18: {
+    name: '기자 피라미드',
+    nameEn: 'Giza Pyramids',
+    model: 'pyramid',
+    scale: 0.6,
+  },
+  city_19: {
+    name: '에베레스트 산',
+    nameEn: 'Mount Everest',
+    model: 'everest',
+    scale: 0.65,
+  },
+  city_20: {
+    name: '쿼카',
+    nameEn: 'Quokka',
+    model: 'quokka',
+    scale: 0.75,
+  },
+  city_21: {
+    name: '구세주 그리스도상',
+    nameEn: 'Christ the Redeemer',
+    model: 'christRedeemer',
+    scale: 0.6,
+  },
+  city_22: {
+    name: '남극 펭귄',
+    nameEn: 'Antarctic Penguin',
+    model: 'penguin',
+    scale: 0.75,
+  },
+  city_23: {
+    name: '북극곰',
+    nameEn: 'Polar Bear',
+    model: 'polarBear',
+    scale: 0.72,
+    heading: 45,
+  },
 }
 
 /** 도시 ID 로 랜드마크 조회 (없으면 null) */

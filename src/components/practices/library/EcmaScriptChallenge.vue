@@ -10,7 +10,10 @@ const runTask1 = () => {
   const rawData = { id: 101, grade: 'VIP', details: { score: 95 } }
 
   const memberContainsPark = members.includes('박부산')
-  const { grade, details: { score } } = rawData
+  const {
+    grade,
+    details: { score },
+  } = rawData
   result1.value = `부산 포함 여부: ${memberContainsPark} / 등급: ${grade} / 점수: ${score}점`
 }
 
@@ -26,7 +29,8 @@ const runTask2 = () => {
 }
 
 const fetchUserId = () => new Promise((res) => setTimeout(() => res({ uid: 777 }), 400))
-const fetchUserProfile = (uid) => new Promise((res) => setTimeout(() => res({ uid, nick: 'Graves' }), 400))
+const fetchUserProfile = (uid) =>
+  new Promise((res) => setTimeout(() => res({ uid, nick: 'Graves' }), 400))
 
 const runTask3 = async () => {
   result3.value = '데이터 동기화 중...'

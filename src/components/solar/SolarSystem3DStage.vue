@@ -17,15 +17,88 @@ const showAllTemps = ref(true) // 기본적으로 전체 온도 한 번에 표�
 
 // 태양계 3D 천체 데이터 (색상, 크기, 궤도 반지름, 표면 온도)
 const PLANET_DATA = [
-  { name: '태양 (Sun)', temp: '5,500 °C', color: 0xff4500, radius: 4.5, dist: 0, speed: 0, desc: '태양계 중심 항성' },
-  { name: '수성 (Mercury)', temp: '-180 ~ 430 °C', color: 0xa1a1aa, radius: 0.8, dist: 9, speed: 0.03, desc: '대기 없음, 극심한 일교차' },
-  { name: '금성 (Venus)', temp: '약 464 °C', color: 0xeab308, radius: 1.4, dist: 14, speed: 0.02, desc: '온실효과로 가장 뜨거운 행성' },
-  { name: '지구 (Earth)', temp: '평균 15 °C', color: 0x38bdf8, radius: 1.5, dist: 20, speed: 0.015, desc: '생명체 서식 최적 온도' },
-  { name: '화성 (Mars)', temp: '-140 ~ 20 °C', color: 0xf97316, radius: 1.1, dist: 26, speed: 0.012, desc: '춥고 건조한 붉은 행성' },
-  { name: '목성 (Jupiter)', temp: '약 -110 °C', color: 0xd97706, radius: 3.2, dist: 35, speed: 0.008, desc: '거대 가스 행성' },
-  { name: '토성 (Saturn)', temp: '약 -140 °C', color: 0xfde047, radius: 2.7, dist: 46, speed: 0.006, ring: true, desc: '아름다운 얼음 고리 행성' },
-  { name: '천왕성 (Uranus)', temp: '약 -195 °C', color: 0x22d3ee, radius: 2.1, dist: 56, speed: 0.004, desc: '가장 추운 청록색 얼음 거인' },
-  { name: '해왕성 (Neptune)', temp: '약 -200 °C', color: 0x3b82f6, radius: 2.0, dist: 66, speed: 0.003, desc: '극한 추위의 푸른 행성' },
+  {
+    name: '태양 (Sun)',
+    temp: '5,500 °C',
+    color: 0xff4500,
+    radius: 4.5,
+    dist: 0,
+    speed: 0,
+    desc: '태양계 중심 항성',
+  },
+  {
+    name: '수성 (Mercury)',
+    temp: '-180 ~ 430 °C',
+    color: 0xa1a1aa,
+    radius: 0.8,
+    dist: 9,
+    speed: 0.03,
+    desc: '대기 없음, 극심한 일교차',
+  },
+  {
+    name: '금성 (Venus)',
+    temp: '약 464 °C',
+    color: 0xeab308,
+    radius: 1.4,
+    dist: 14,
+    speed: 0.02,
+    desc: '온실효과로 가장 뜨거운 행성',
+  },
+  {
+    name: '지구 (Earth)',
+    temp: '평균 15 °C',
+    color: 0x38bdf8,
+    radius: 1.5,
+    dist: 20,
+    speed: 0.015,
+    desc: '생명체 서식 최적 온도',
+  },
+  {
+    name: '화성 (Mars)',
+    temp: '-140 ~ 20 °C',
+    color: 0xf97316,
+    radius: 1.1,
+    dist: 26,
+    speed: 0.012,
+    desc: '춥고 건조한 붉은 행성',
+  },
+  {
+    name: '목성 (Jupiter)',
+    temp: '약 -110 °C',
+    color: 0xd97706,
+    radius: 3.2,
+    dist: 35,
+    speed: 0.008,
+    desc: '거대 가스 행성',
+  },
+  {
+    name: '토성 (Saturn)',
+    temp: '약 -140 °C',
+    color: 0xfde047,
+    radius: 2.7,
+    dist: 46,
+    speed: 0.006,
+    ring: true,
+    desc: '아름다운 얼음 고리 행성',
+  },
+  {
+    name: '천왕성 (Uranus)',
+    temp: '약 -195 °C',
+    color: 0x22d3ee,
+    radius: 2.1,
+    dist: 56,
+    speed: 0.004,
+    desc: '가장 추운 청록색 얼음 거인',
+  },
+  {
+    name: '해왕성 (Neptune)',
+    temp: '약 -200 °C',
+    color: 0x3b82f6,
+    radius: 2.0,
+    dist: 66,
+    speed: 0.003,
+    desc: '극한 추위의 푸른 행성',
+  },
 ]
 
 let scene = null
@@ -82,7 +155,12 @@ const initSolarScene = () => {
     starPos[i * 3 + 2] = (Math.random() - 0.5) * 400
   }
   starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3))
-  const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 1.2, transparent: true, opacity: 0.8 })
+  const starMat = new THREE.PointsMaterial({
+    color: 0xffffff,
+    size: 1.2,
+    transparent: true,
+    opacity: 0.8,
+  })
   const starField = new THREE.Points(starGeo, starMat)
   scene.add(starField)
 
@@ -129,7 +207,11 @@ const initSolarScene = () => {
         points.push(new THREE.Vector3(Math.cos(theta) * data.dist, 0, Math.sin(theta) * data.dist))
       }
       orbitGeo.setFromPoints(points)
-      const orbitMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.15 })
+      const orbitMat = new THREE.LineBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.15,
+      })
       const orbitLine = new THREE.Line(orbitGeo, orbitMat)
       scene.add(orbitLine)
     }

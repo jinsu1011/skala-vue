@@ -69,9 +69,7 @@ const infoTiles = computed(() => {
 
     <!-- 상단 네비게이션 -->
     <header class="planet-topbar">
-      <button class="back-btn" @click="goBack">
-        ← 태양계로 돌아가기
-      </button>
+      <button class="back-btn" @click="goBack">← 태양계로 돌아가기</button>
 
       <div v-if="planet" class="planet-name-bar">
         <span class="planet-icon">{{ planet.icon }}</span>
@@ -79,11 +77,7 @@ const infoTiles = computed(() => {
         <span class="planet-badge">{{ planet.category }}</span>
       </div>
 
-      <button
-        class="info-toggle"
-        :class="{ active: showInfo }"
-        @click="showInfo = !showInfo"
-      >
+      <button class="info-toggle" :class="{ active: showInfo }" @click="showInfo = !showInfo">
         {{ showInfo ? '📋 정보 숨기기' : '📋 정보 보기' }}
       </button>
     </header>
@@ -94,7 +88,9 @@ const infoTiles = computed(() => {
         <!-- 핵심 온도 하이라이트 -->
         <div class="temp-highlight" :style="{ borderColor: planet.colorHex }">
           <span class="temp-label">표면 온도</span>
-          <span class="temp-value" :style="{ color: planet.colorHex }">{{ planet.surfaceTemp }}</span>
+          <span class="temp-value" :style="{ color: planet.colorHex }">{{
+            planet.surfaceTemp
+          }}</span>
         </div>
 
         <!-- 설명 -->
@@ -102,11 +98,7 @@ const infoTiles = computed(() => {
 
         <!-- 정보 타일 그리드 -->
         <div class="info-grid">
-          <div
-            v-for="tile in infoTiles"
-            :key="tile.label"
-            class="info-tile"
-          >
+          <div v-for="tile in infoTiles" :key="tile.label" class="info-tile">
             <span class="tile-icon">{{ tile.icon }}</span>
             <div class="tile-body">
               <span class="tile-label">{{ tile.label }}</span>
@@ -130,9 +122,7 @@ const infoTiles = computed(() => {
     </div>
 
     <!-- 하단 힌트 -->
-    <div class="bottom-hint">
-      🖱️ 드래그: 행성 회전 · 스크롤: 줌 · 자동 회전 중
-    </div>
+    <div class="bottom-hint">🖱️ 드래그: 행성 회전 · 스크롤: 줌 · 자동 회전 중</div>
   </div>
 </template>
 

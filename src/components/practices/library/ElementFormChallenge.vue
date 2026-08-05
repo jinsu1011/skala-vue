@@ -33,11 +33,7 @@ const handleRegister = () => {
 
     <el-form label-position="left" label-width="80px">
       <el-form-item label="이메일 주소:">
-        <el-input
-          v-model="userForm.email"
-          placeholder="example@email.com"
-          clearable
-        />
+        <el-input v-model="userForm.email" placeholder="example@email.com" clearable />
       </el-form-item>
 
       <el-form-item>

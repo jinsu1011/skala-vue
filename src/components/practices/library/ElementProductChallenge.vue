@@ -28,12 +28,7 @@ const productRate = ref(4)
       <span class="score">{{ productRate }}점</span>
     </div>
 
-    <el-alert
-      type="success"
-      :closable="false"
-      show-icon
-      style="margin-top: 16px"
-    >
+    <el-alert type="success" :closable="false" show-icon style="margin-top: 16px">
       <template #title>
         실시간 장부 요약: 선택 수량 {{ productQuantity }}개 / 내가 준 점수 {{ productRate }}점
       </template>

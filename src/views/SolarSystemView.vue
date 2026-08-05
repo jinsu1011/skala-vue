@@ -14,7 +14,8 @@ const router = useRouter()
 const containerRef = ref(null)
 const showLabels = ref(true)
 
-const { initSolarSystem, labelCoords, hoveredPlanet, selectedPlanet, selectPlanetById } = useSolarSystem()
+const { initSolarSystem, labelCoords, hoveredPlanet, selectedPlanet, selectPlanetById } =
+  useSolarSystem()
 
 // 지구 클릭 시 기존 날씨 지구본으로 이동
 const handleEarthClick = () => {
@@ -113,7 +114,9 @@ onMounted(async () => {
         <!-- 핵심 온도 -->
         <div class="temp-card" :style="{ borderColor: selectedPlanet.colorHex }">
           <span class="tc-label">🌡️ 표면 온도</span>
-          <span class="tc-value" :style="{ color: selectedPlanet.colorHex }">{{ selectedPlanet.surfaceTemp }}</span>
+          <span class="tc-value" :style="{ color: selectedPlanet.colorHex }">{{
+            selectedPlanet.surfaceTemp
+          }}</span>
         </div>
 
         <!-- 설명 -->
@@ -175,9 +178,7 @@ onMounted(async () => {
     </Transition>
 
     <!-- 하단 힌트 -->
-    <div class="bottom-hint">
-      🖱️ 드래그: 회전 · 스크롤: 줌 · 클릭: 행성 정보
-    </div>
+    <div class="bottom-hint">🖱️ 드래그: 회전 · 스크롤: 줌 · 클릭: 행성 정보</div>
   </div>
 </template>
 
@@ -222,7 +223,9 @@ onMounted(async () => {
   gap: 12px;
 }
 
-.brand-icon { font-size: 28px; }
+.brand-icon {
+  font-size: 28px;
+}
 
 .brand-title {
   font-size: 18px;
@@ -256,7 +259,8 @@ onMounted(async () => {
   transition: all 0.2s ease;
 }
 
-.label-toggle:hover, .label-toggle.active {
+.label-toggle:hover,
+.label-toggle.active {
   background: rgba(250, 204, 21, 0.3);
 }
 
@@ -279,8 +283,10 @@ onMounted(async () => {
 /* ── 라벨 오버레이 ── */
 .label-overlay {
   position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   z-index: 50;
 }
@@ -315,11 +321,26 @@ onMounted(async () => {
   background: rgba(250, 204, 21, 0.15);
 }
 
-.planet-label.earth { border-color: #3b82f6 !important; background: rgba(29, 78, 216, 0.3); }
+.planet-label.earth {
+  border-color: #3b82f6 !important;
+  background: rgba(29, 78, 216, 0.3);
+}
 
-.label-name { font-size: 11px; font-weight: 700; color: #e2e8f0; }
-.label-temp { font-size: 11px; font-weight: 800; letter-spacing: -0.3px; }
-.label-hint { font-size: 9px; color: #93c5fd; margin-top: 1px; }
+.label-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+.label-temp {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+.label-hint {
+  font-size: 9px;
+  color: #93c5fd;
+  margin-top: 1px;
+}
 
 /* ── 행성 정보 패널 ── */
 .planet-info-panel {
@@ -352,7 +373,9 @@ onMounted(async () => {
   gap: 10px;
 }
 
-.info-icon { font-size: 32px; }
+.info-icon {
+  font-size: 32px;
+}
 
 .info-name {
   font-size: 18px;
@@ -375,14 +398,17 @@ onMounted(async () => {
   background: rgba(255, 255, 255, 0.1);
   border: none;
   color: #fff;
-  width: 32px; height: 32px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   font-size: 14px;
   cursor: pointer;
   transition: background 0.2s;
 }
 
-.info-close:hover { background: rgba(255, 255, 255, 0.25); }
+.info-close:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
 
 .temp-card {
   text-align: center;
@@ -430,11 +456,28 @@ onMounted(async () => {
   border-radius: 14px;
 }
 
-.tile-icon { font-size: 18px; }
-.tile-body { display: flex; flex-direction: column; }
-.tile-label { font-size: 11px; color: rgba(255, 255, 255, 0.5); }
-.tile-val { font-size: 13px; font-weight: 700; color: #f1f5f9; }
-.tile-sub { font-size: 11px; color: #fde047; font-weight: 600; margin-top: 1px; }
+.tile-icon {
+  font-size: 18px;
+}
+.tile-body {
+  display: flex;
+  flex-direction: column;
+}
+.tile-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+.tile-val {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+.tile-sub {
+  font-size: 11px;
+  color: #fde047;
+  font-weight: 600;
+  margin-top: 1px;
+}
 
 .fun-fact {
   padding: 14px;
@@ -475,11 +518,13 @@ onMounted(async () => {
 }
 
 /* ── 패널 트랜지션 ── */
-.info-slide-enter-active, .info-slide-leave-active {
+.info-slide-enter-active,
+.info-slide-leave-active {
   transition: all 0.3s ease;
 }
 
-.info-slide-enter-from, .info-slide-leave-to {
+.info-slide-enter-from,
+.info-slide-leave-to {
   opacity: 0;
   transform: translateX(40px);
 }
@@ -489,13 +534,18 @@ onMounted(async () => {
     flex-direction: column;
     align-items: flex-start;
   }
-  .brand-sub { display: none; }
-  .solar-controls { flex-wrap: wrap; }
+  .brand-sub {
+    display: none;
+  }
+  .solar-controls {
+    flex-wrap: wrap;
+  }
 
   .planet-info-panel {
     top: auto;
     bottom: 0;
-    right: 0; left: 0;
+    right: 0;
+    left: 0;
     width: 100%;
     max-height: 55vh;
     border-radius: 22px 22px 0 0;

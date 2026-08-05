@@ -131,19 +131,14 @@ const activeIndex = ref(0)
         </div>
 
         <!-- 선택된 천체 하이라이트 카드 -->
-        <div
-          class="solar-active-card"
-          :style="{ background: solarBodies[activeIndex].bg }"
-        >
+        <div class="solar-active-card" :style="{ background: solarBodies[activeIndex].bg }">
           <div class="active-card-left">
             <span class="active-icon">{{ solarBodies[activeIndex].icon }}</span>
           </div>
           <div class="active-card-right">
             <div class="active-badge">{{ solarBodies[activeIndex].category }}</div>
             <h3 class="active-name">{{ solarBodies[activeIndex].name }}</h3>
-            <div class="active-temp-val">
-              표면 온도: {{ solarBodies[activeIndex].temp }}
-            </div>
+            <div class="active-temp-val">표면 온도: {{ solarBodies[activeIndex].temp }}</div>
             <p class="active-desc">{{ solarBodies[activeIndex].desc }}</p>
           </div>
         </div>

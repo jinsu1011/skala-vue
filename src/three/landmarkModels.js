@@ -45,6 +45,17 @@ const COLOR = {
   concrete: 0xc9cfd6,
   cable: 0xe8eef5,
   roofTile: 0xc0663f, // 기와
+  snow: 0xffffff,
+  ice: 0xddeefc,
+  black: 0x2d3238,
+  white: 0xfafafa,
+  brown: 0x875a36,
+  brownDark: 0x5a3a20,
+  orange: 0xf28500,
+  sand: 0xe6bd75,
+  sandDark: 0xcc9f52,
+  forest: 0x3d6e35,
+  leafGreen: 0x7ecc49,
 }
 
 // ── 도형 헬퍼 ────────────────────────────────────────
@@ -695,6 +706,221 @@ const buildHollywoodSign = () => {
   return flatten(g)
 }
 
+/** 🇮🇹 이탈리아 로마 (피사) — 피사의 사탑 */
+const buildPisaTower = () => {
+  const g = new THREE.Group()
+  const m = {
+    white: clay(COLOR.cream),
+    stone: clay(COLOR.stone),
+    grass: clay(COLOR.grass),
+    base: clay(COLOR.soil),
+  }
+  g.add(hill(m.grass, 2.4, 0.6, 2.4))
+  g.add(at(cyl(m.base, 1.2, 1.4, 0.4, 16), 0, 0.35, 0))
+
+  const tower = new THREE.Group()
+  for (let i = 0; i < 6; i++) {
+    const y = 0.5 + i * 0.75
+    tower.add(at(cyl(m.stone, 0.65, 0.65, 0.75, 14), 0, y, 0))
+    tower.add(at(cyl(m.white, 0.85, 0.82, 0.12, 14), 0, y - 0.3, 0))
+  }
+  tower.add(at(cyl(m.white, 0.5, 0.5, 0.6, 12), 0, 5.0, 0))
+  tower.add(at(cyl(m.stone, 0.55, 0.55, 0.1, 12), 0, 5.35, 0))
+
+  tower.position.set(0, 0.35, 0)
+  tower.rotation.z = -0.22 // 우측으로 기울어지도록 사선의 미
+  g.add(tower)
+
+  return flatten(g)
+}
+
+/** 🇪🇬 이집트 카이로 — 기자 피라미드 */
+const buildPyramid = () => {
+  const g = new THREE.Group()
+  const m = {
+    sand: clay(COLOR.sand),
+    pyramid: clay(COLOR.sandDark),
+    pyramidLight: clay(COLOR.stone),
+    stone: clay(COLOR.stoneDark),
+  }
+  g.add(hill(m.sand, 3.2, 0.7, 3.2))
+
+  const mainP = at(cone(m.pyramid, 1.8, 2.8, 4), -0.4, 1.6, -0.3)
+  mainP.rotation.y = Math.PI / 4
+  g.add(mainP)
+  const cap = at(cone(m.pyramidLight, 0.45, 0.7, 4), -0.4, 2.68, -0.3)
+  cap.rotation.y = Math.PI / 4
+  g.add(cap)
+
+  const secondP = at(cone(m.pyramid, 1.3, 2.1, 4), 1.1, 1.2, 0.7)
+  secondP.rotation.y = Math.PI / 4
+  g.add(secondP)
+
+  for (let i = 0; i < 3; i++) {
+    const smallP = at(cone(m.stone, 0.4, 0.6, 4), -1.6 + i * 0.55, 0.5, 1.5)
+    smallP.rotation.y = Math.PI / 4
+    g.add(smallP)
+  }
+
+  return flatten(g)
+}
+
+/** 🇳🇵 네팔 카트만두 — 에베레스트 산 */
+const buildEverest = () => {
+  const g = new THREE.Group()
+  const m = {
+    rock: clay(COLOR.graniteDark),
+    rockMid: clay(COLOR.granite),
+    snow: clay(COLOR.snow),
+    base: clay(COLOR.concrete),
+  }
+  g.add(hill(m.base, 3.4, 0.9, 3.4))
+
+  g.add(at(cone(m.rock, 2.0, 4.5, 6), 0, 2.5, 0))
+  g.add(at(cone(m.snow, 0.88, 2.0, 6), 0, 3.76, 0))
+
+  g.add(at(cone(m.rockMid, 1.5, 3.0, 5), -1.4, 1.7, 0.6))
+  g.add(at(cone(m.snow, 0.65, 1.3, 5), -1.4, 2.56, 0.6))
+
+  g.add(at(cone(m.rockMid, 1.4, 2.7, 5), 1.3, 1.5, -0.5))
+  g.add(at(cone(m.snow, 0.6, 1.2, 5), 1.3, 2.26, -0.5))
+
+  return flatten(g)
+}
+
+/** 🇦🇺 호주 캔버라 — 귀여운 쿼카 */
+const buildQuokka = () => {
+  const g = new THREE.Group()
+  const m = {
+    brown: clay(COLOR.brown),
+    brownDark: clay(COLOR.brownDark),
+    belly: clay(COLOR.stone),
+    black: clay(COLOR.black),
+    nose: clay(0x3a2010),
+    leaf: clay(COLOR.leafGreen),
+    grass: clay(COLOR.grass),
+  }
+  g.add(hill(m.grass, 2.4, 0.6, 2.4))
+
+  g.add(at(scaled(ball(m.brown, 1.05), 0.95, 1.2, 0.9), 0, 1.6, -0.1))
+  g.add(at(scaled(ball(m.belly, 0.8), 0.8, 0.9, 0.4), 0, 1.5, 0.55))
+
+  g.add(at(scaled(ball(m.brown, 0.82), 1.15, 0.95, 0.95), 0, 2.75, 0.05))
+  g.add(at(scaled(ball(m.brownDark, 0.28), 1.0, 1.2, 0.5), -0.65, 3.35, -0.05))
+  g.add(at(scaled(ball(m.brownDark, 0.28), 1.0, 1.2, 0.5), 0.65, 3.35, -0.05))
+
+  g.add(at(ball(m.black, 0.11), -0.32, 2.85, 0.78))
+  g.add(at(ball(m.black, 0.11), 0.32, 2.85, 0.78))
+  g.add(at(ball(m.nose, 0.13), 0, 2.65, 0.82))
+
+  g.add(at(ball(m.brownDark, 0.22), -0.35, 1.95, 0.75))
+  g.add(at(ball(m.brownDark, 0.22), 0.35, 1.95, 0.75))
+  const leaf = at(box(m.leaf, 0.7, 0.4, 0.08), 0, 1.95, 0.9)
+  leaf.rotation.z = 0.4
+  g.add(leaf)
+
+  g.add(at(scaled(ball(m.brownDark, 0.35), 0.8, 0.4, 1.3), -0.45, 0.55, 0.3))
+  g.add(at(scaled(ball(m.brownDark, 0.35), 0.8, 0.4, 1.3), 0.45, 0.55, 0.3))
+
+  return flatten(g)
+}
+
+/** 🇧🇷 브라질 리우데자네이루 — 구세주 그리스도상 */
+const buildChristRedeemer = () => {
+  const g = new THREE.Group()
+  const m = {
+    forest: clay(COLOR.forest),
+    rock: clay(COLOR.graniteDark),
+    statue: clay(COLOR.cream),
+    pedestal: clay(COLOR.stoneDark),
+  }
+  g.add(hill(m.forest, 3.0, 1.0, 3.0))
+  g.add(at(cone(m.rock, 1.6, 2.8, 8), 0, 1.6, 0))
+  g.add(at(cone(m.forest, 1.5, 2.5, 8), 0, 1.5, 0))
+
+  g.add(at(cyl(m.pedestal, 0.5, 0.6, 0.6, 12), 0, 3.0, 0))
+  g.add(at(cyl(m.statue, 0.32, 0.46, 2.2, 12), 0, 4.3, 0))
+  g.add(at(box(m.statue, 2.8, 0.3, 0.35), 0, 5.2, 0.0))
+
+  const head = at(ball(m.statue, 0.32, 12), 0, 5.75, 0.05)
+  g.add(head)
+
+  return flatten(g)
+}
+
+/** 🇦🇶 남극 — 남극 펭귄 */
+const buildPenguin = () => {
+  const g = new THREE.Group()
+  const m = {
+    ice: clay(COLOR.ice),
+    snow: clay(COLOR.snow),
+    black: clay(COLOR.black),
+    white: clay(COLOR.white),
+    beak: clay(COLOR.orange),
+    gold: clay(COLOR.gold),
+  }
+  g.add(at(cyl(m.ice, 2.0, 2.3, 0.6, 7), 0, 0.3, 0))
+  g.add(hill(m.snow, 1.8, 0.4, 1.8, 0, 0.5))
+
+  g.add(at(scaled(ball(m.black, 0.9), 0.95, 1.35, 0.85), 0, 1.8, 0))
+  g.add(at(scaled(ball(m.white, 0.75), 0.85, 1.18, 0.4), 0, 1.75, 0.52))
+  g.add(at(scaled(ball(m.gold, 0.4), 0.8, 0.3, 0.3), 0, 2.5, 0.65))
+
+  g.add(at(ball(m.black, 0.62), 0, 3.0, 0.05))
+  g.add(at(ball(m.white, 0.12), -0.25, 3.05, 0.55))
+  g.add(at(ball(m.white, 0.12), 0.25, 3.05, 0.55))
+  g.add(at(ball(m.black, 0.06), -0.25, 3.05, 0.64))
+  g.add(at(ball(m.black, 0.06), 0.25, 3.05, 0.64))
+
+  const beak = at(cone(m.beak, 0.16, 0.6, 8), 0, 2.9, 0.72)
+  beak.rotation.x = Math.PI / 2
+  g.add(beak)
+
+  const lWing = at(box(m.black, 0.18, 1.3, 0.45), -0.92, 1.85, 0)
+  lWing.rotation.z = 0.2
+  g.add(lWing)
+  const rWing = at(box(m.black, 0.18, 1.3, 0.45), 0.92, 1.85, 0)
+  rWing.rotation.z = -0.2
+  g.add(rWing)
+
+  g.add(at(box(m.beak, 0.4, 0.15, 0.7), -0.38, 0.65, 0.4))
+  g.add(at(box(m.beak, 0.4, 0.15, 0.7), 0.38, 0.65, 0.4))
+
+  return flatten(g)
+}
+
+/** 🇮🇸 북극권 — 북극곰 */
+const buildPolarBear = () => {
+  const g = new THREE.Group()
+  const m = {
+    ice: clay(COLOR.ice),
+    water: clay(0xaad8e6),
+    snow: clay(COLOR.snow),
+    black: clay(COLOR.black),
+  }
+  g.add(at(cyl(m.water, 2.4, 2.6, 0.4, 8), 0, 0.2, 0))
+  g.add(at(cyl(m.ice, 2.1, 2.2, 0.4, 6), 0.1, 0.4, 0))
+
+  g.add(at(scaled(ball(m.snow, 1.0), 1.5, 1.0, 0.95), 0, 1.7, 0))
+
+  g.add(at(cyl(m.snow, 0.32, 0.36, 1.1, 10), -0.9, 1.0, 0.5))
+  g.add(at(cyl(m.snow, 0.32, 0.36, 1.1, 10), 0.9, 1.0, 0.5))
+  g.add(at(cyl(m.snow, 0.32, 0.36, 1.1, 10), -0.9, 1.0, -0.5))
+  g.add(at(cyl(m.snow, 0.32, 0.36, 1.1, 10), 0.9, 1.0, -0.5))
+
+  g.add(at(scaled(ball(m.snow, 0.65), 0.85, 0.95, 1.1), 0, 2.15, 1.1))
+
+  g.add(at(ball(m.snow, 0.22), -0.38, 2.65, 0.85))
+  g.add(at(ball(m.snow, 0.22), 0.38, 2.65, 0.85))
+
+  g.add(at(scaled(ball(m.snow, 0.4), 0.8, 0.7, 1.0), 0, 2.0, 1.5))
+  g.add(at(ball(m.black, 0.11), 0, 2.05, 1.92))
+  g.add(at(ball(m.black, 0.08), -0.22, 2.28, 1.5))
+  g.add(at(ball(m.black, 0.08), 0.22, 2.28, 1.5))
+
+  return flatten(g)
+}
+
 // ────────────────────────────────────────────────────
 // 등록부
 // ────────────────────────────────────────────────────
@@ -711,6 +937,13 @@ const BUILDERS = {
   kremlin: buildKremlin,
   sagradaFamilia: buildSagradaFamilia,
   hollywoodSign: buildHollywoodSign,
+  pisaTower: buildPisaTower,
+  pyramid: buildPyramid,
+  everest: buildEverest,
+  quokka: buildQuokka,
+  christRedeemer: buildChristRedeemer,
+  penguin: buildPenguin,
+  polarBear: buildPolarBear,
 }
 
 /** 만들 수 있는 모형인지 확인 */

@@ -119,10 +119,7 @@ export const owmFetchCurrentWeather = async (cities) => {
       .catch(() => null),
   )
 
-  const [currents, forecasts] = await Promise.all([
-    Promise.all(requests),
-    Promise.all(popRequests),
-  ])
+  const [currents, forecasts] = await Promise.all([Promise.all(requests), Promise.all(popRequests)])
 
   return cities.map((city, i) => {
     const d = currents[i].data

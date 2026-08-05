@@ -155,7 +155,9 @@ watch(
   height: 36px;
   background: rgba(16, 185, 129, 0.35); /* 랜드마크 밑판 느낌의 초록/점토빛 발광 */
   border: 2px solid var(--marker-color, #34d399);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.6),
+    inset 0 0 10px rgba(255, 255, 255, 0.2);
   transform: rotateX(65deg) scale(var(--marker-scale, 1));
 }
 
