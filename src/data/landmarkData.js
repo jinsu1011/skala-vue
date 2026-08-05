@@ -18,13 +18,13 @@ export const LANDMARKS = {
     name: 'N서울타워',
     nameEn: 'N Seoul Tower',
     model: 'seoulTower',
-    scale: 0.55,
+    scale: 0.63,
   },
   city_07: {
     name: '광안대교',
     nameEn: 'Gwangan Bridge',
     model: 'gwanganBridge',
-    scale: 0.42,
+    scale: 0.48,
     heading: 25,
   },
   city_08: {
@@ -32,57 +32,57 @@ export const LANDMARKS = {
     nameEn: 'Dol Hareubang',
     model: 'dolHareubang',
     // 돌하르방은 원래 사람 키만 해서, 다른 랜드마크와 나란히 보이도록 크게 키웁니다
-    scale: 0.7,
+    scale: 0.8,
   },
   city_09: {
     name: '자유의 여신상',
     nameEn: 'Statue of Liberty',
     model: 'libertyStatue',
-    scale: 0.5,
+    scale: 0.58,
   },
   city_10: {
     name: '도쿄 타워',
     nameEn: 'Tokyo Tower',
     model: 'tokyoTower',
-    scale: 0.55,
+    scale: 0.63,
   },
   city_11: {
     name: '타워 브릿지',
     nameEn: 'Tower Bridge',
     model: 'towerBridge',
-    scale: 0.5,
+    scale: 0.58,
   },
   city_12: {
     name: '에펠탑',
     nameEn: 'Eiffel Tower',
     model: 'eiffelTower',
-    scale: 0.55,
+    scale: 0.63,
   },
   city_13: {
     name: '만리장성',
     nameEn: 'Great Wall',
     model: 'greatWall',
     // 성벽이 길어야 만리장성답기 때문에 다른 랜드마크보다 크게 둡니다
-    scale: 0.45,
+    scale: 0.52,
     heading: -18,
   },
   city_14: {
     name: '크렘린궁',
     nameEn: 'Kremlin',
     model: 'kremlin',
-    scale: 0.5,
+    scale: 0.58,
   },
   city_15: {
     name: '사그라다 파밀리아',
     nameEn: 'Sagrada Familia',
     model: 'sagradaFamilia',
-    scale: 0.48,
+    scale: 0.55,
   },
   city_16: {
     name: '할리우드 사인',
     nameEn: 'Hollywood Sign',
     model: 'hollywoodSign',
-    scale: 0.5,
+    scale: 0.58,
   },
 }
 

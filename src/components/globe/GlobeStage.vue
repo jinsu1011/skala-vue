@@ -78,7 +78,13 @@ watch(
     const city = weatherStore.citiesWeather.find((c) => c.id === cityId)
     if (city) {
       weatherStore.setViewState('flying')
-      flyTo({ lat: city.lat, lng: city.lon, altitude: 0.38 }, 1800)
+      /*
+       * 0.38 → 0.55 로 조금 물러섰습니다.
+       * 카메라를 눕히려면 도시에서 옆으로 비켜서야 하는데(useGlobe 의 틸트-시프트),
+       * 너무 바짝 붙어 있으면 조금만 비켜도 도시가 화면 밖으로 밀려납니다.
+       * 멀어진 만큼은 랜드마크 모형 크기를 키워 상쇄했습니다.
+       */
+      flyTo({ lat: city.lat, lng: city.lon, altitude: 0.55 }, 1800)
 
       setTimeout(() => {
         if (weatherStore.selectedCityId === cityId) {

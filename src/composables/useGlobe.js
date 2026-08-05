@@ -130,6 +130,53 @@ export function useGlobe() {
     globe.objectsData(next ? citiesWithLandmark() : [])
   }
 
+  /*
+   * 🛩️ 비스듬히 내려다보기 (틸트-시프트)
+   *
+   * ▶ 문제
+   * 지구본 카메라는 **항상 지구 중심을 바라보도록** 고정돼 있습니다.
+   * 그래서 도시를 화면 한가운데 두면 그 도시를 정확히 정수리에서 내려다보게 되고,
+   * 위로 솟은 탑은 납작한 점이 돼 버립니다.
+   *
+   * ▶ 해결
+   * 두 가지를 같이 씁니다.
+   *  1) 카메라를 도시보다 조금 남쪽에 세웁니다 (아래 FLY_TILT_DEG).
+   *     그러면 도시를 옆에서 비스듬히 보게 되지만, 도시가 화면 위쪽으로 밀려
+   *     상단 검색 바에 가려집니다.
+   *  2) 그래서 렌즈만 위로 밀어(setViewOffset) 도시를 화면 가운데로 되돌립니다.
+   *     사진에서 높은 건물을 담을 때 쓰는 **틸트-시프트 렌즈**와 같은 원리로,
+   *     카메라를 억지로 돌리지 않고 화각만 옮기는 것이라
+   *     globe.gl 의 카메라 제어와 부딪히지 않습니다.
+   *
+   * 결과적으로 시선이 지면과 이루는 각이 약 21° → 32° 로 눕습니다.
+   */
+  const VIEW_SHIFT_MAX = 0.38 // 화면 높이의 몇 배만큼 렌즈를 밀어 올릴지
+  const VIEW_SHIFT_FROM = 1.3 // 이 고도부터 서서히 눕기 시작
+  const VIEW_SHIFT_TO = 0.38 // 이 고도에서 최대로 눕음
+
+  /**
+   * 고도에 맞춰 렌즈 이동량을 갱신합니다.
+   * 갑자기 툭 튀지 않도록 고도에 따라 부드럽게 이어집니다.
+   */
+  const applyViewShift = (alt) => {
+    const camera = globe?.camera()
+    if (!camera) return
+
+    const width = globe.width() || 1
+    const height = globe.height() || 1
+
+    const progress = (VIEW_SHIFT_FROM - alt) / (VIEW_SHIFT_FROM - VIEW_SHIFT_TO)
+    const shift = Math.max(0, Math.min(1, progress)) * VIEW_SHIFT_MAX
+
+    if (shift < 0.001) {
+      camera.clearViewOffset()
+      return
+    }
+
+    // offsetY 를 음수로 주면 절두체가 위로 올라가고, 화면 내용은 그만큼 내려옵니다
+    camera.setViewOffset(width, height, 0, -height * shift, width, height)
+  }
+
   /** 현재 높이에서 어떤 단계여야 하는지 결정 (중간 구간은 지금 단계를 유지) */
   const resolveLod = (alt, current) => {
     if (alt >= LOD_FAR_ABOVE) return 'far'
@@ -372,6 +419,9 @@ export function useGlobe() {
 
         // 🏛️ 가까이 내려오면 랜드마크 3D 모형을 지면에 세웁니다
         syncLandmarks(alt)
+
+        // 🛩️ 가까울수록 시선을 눕혀 모형이 서 있는 게 보이도록 합니다
+        applyViewShift(alt)
       }
 
       controlsChangeHandler = () => {
@@ -416,6 +466,9 @@ export function useGlobe() {
       const h = containerEl.clientHeight || window.innerHeight
       globe.width(w)
       globe.height(h)
+
+      // 렌즈 이동량은 화면 크기 기준이라 창이 바뀌면 다시 계산해야 합니다
+      applyViewShift(globe.pointOfView()?.altitude ?? 2.2)
     }
 
     resizeHandler = applySize
@@ -497,16 +550,13 @@ export function useGlobe() {
   }
 
   /*
-   * 도시를 정확히 머리 위에서 내려다보면 랜드마크가 납작해 보입니다.
-   * 탑처럼 위로 솟은 모형은 위에서 보면 그냥 점이 되기 때문입니다.
+   * 카메라를 도시보다 몇 도 남쪽에 세울지 (위의 틸트-시프트 설명 참고).
    *
-   * 그래서 카메라를 도시보다 조금 남쪽(위도 -5°)에 세웁니다.
-   * 지구본 카메라는 늘 지구 중심을 바라보므로, 이렇게 하면 도시를
-   * **약 18° 비스듬히** 내려다보게 되어 모형이 서 있는 게 보입니다. (구글어스와 비슷한 시점)
-   * 덤으로 도시가 화면 중앙보다 살짝 위에 놓여, 아래에서 올라오는
-   * 상세 시트에 가려지지 않습니다.
+   * 이 각도가 클수록 더 눕지만, 그만큼 도시가 화면 위로 밀려 올라갑니다.
+   * 12° 에서 시선이 지면과 이루는 각이 약 32° 가 되고,
+   * 밀려 올라간 만큼은 applyViewShift 가 렌즈를 옮겨 되돌려 줍니다.
    */
-  const FLY_TILT_DEG = 6
+  const FLY_TILT_DEG = 22
 
   /**
    * 지구본 시점 비행 애니메이션
