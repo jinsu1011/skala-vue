@@ -150,7 +150,7 @@ export function useGlobe() {
    *
    * 결과적으로 시선이 지면과 이루는 각이 약 21° → 32° 로 눕습니다.
    */
-  const VIEW_SHIFT_MAX = 0.38 // 화면 높이의 몇 배만큼 렌즈를 밀어 올릴지
+  const VIEW_SHIFT_MAX = 0.52 // 화면 높이의 몇 배만큼 렌즈를 밀어 올릴지
   const VIEW_SHIFT_FROM = 1.3 // 이 고도부터 서서히 눕기 시작
   const VIEW_SHIFT_TO = 0.38 // 이 고도에서 최대로 눕음
 
@@ -556,7 +556,7 @@ export function useGlobe() {
    * 12° 에서 시선이 지면과 이루는 각이 약 32° 가 되고,
    * 밀려 올라간 만큼은 applyViewShift 가 렌즈를 옮겨 되돌려 줍니다.
    */
-  const FLY_TILT_DEG = 22
+  const FLY_TILT_DEG = 32
 
   /**
    * 지구본 시점 비행 애니메이션
