@@ -24,7 +24,11 @@ const filteredCities = computed(() => {
   const q = query.value.trim().toLowerCase()
   if (!q) return []
   return CITIES.filter(
-    (c) => c.name.toLowerCase().includes(q) || c.englishName.toLowerCase().includes(q),
+    (c) =>
+      c.name.toLowerCase().includes(q) ||
+      c.englishName.toLowerCase().includes(q) ||
+      c.region.toLowerCase().includes(q) ||
+      (c.aliases && c.aliases.some((alias) => alias.toLowerCase().includes(q))),
   )
 })
 
@@ -72,7 +76,7 @@ const handleKeyDown = (e) => {
       onSelect(items[0])
     } else if (query.value.trim()) {
       // 미지원 지역 메시지
-      notSupportedMessage.value = `'${query.value.trim()}'는 아직 지원하지 않는 지역입니다. (지원: 국내 8개 도시, 뉴욕·도쿄·런던·파리)`
+      notSupportedMessage.value = `'${query.value.trim()}'는 아직 지원하지 않는 지역입니다. (지원: 국내 8개 도시, 뉴욕·도쿄·런던·파리·베이징·모스크바·마드리드·LA)`
     }
   } else if (e.key === 'Escape') {
     isOpen.value = false

@@ -113,6 +113,7 @@ export const CITIES = [
     lat: 40.7128,
     lon: -74.006,
     timezone: 'America/New_York',
+    aliases: ['ny', 'new york', '뉴욕'],
   },
   {
     id: 'city_10',
@@ -123,6 +124,7 @@ export const CITIES = [
     lat: 35.6762,
     lon: 139.6503,
     timezone: 'Asia/Tokyo',
+    aliases: ['tokyo', '도쿄', '동경'],
   },
   {
     id: 'city_11',
@@ -133,6 +135,7 @@ export const CITIES = [
     lat: 51.5074,
     lon: -0.1278,
     timezone: 'Europe/London',
+    aliases: ['london', '런던'],
   },
   {
     id: 'city_12',
@@ -143,6 +146,7 @@ export const CITIES = [
     lat: 48.8566,
     lon: 2.3522,
     timezone: 'Europe/Paris',
+    aliases: ['paris', '파리'],
   },
   {
     id: 'city_13',
@@ -153,6 +157,7 @@ export const CITIES = [
     lat: 39.9042,
     lon: 116.4074,
     timezone: 'Asia/Shanghai',
+    aliases: ['beijing', '베이징', '북경'],
   },
   {
     id: 'city_14',
@@ -163,6 +168,7 @@ export const CITIES = [
     lat: 55.7558,
     lon: 37.6173,
     timezone: 'Europe/Moscow',
+    aliases: ['moscow', '모스크바'],
   },
   {
     id: 'city_15',
@@ -173,6 +179,7 @@ export const CITIES = [
     lat: 40.4168,
     lon: -3.7038,
     timezone: 'Europe/Madrid',
+    aliases: ['madrid', '마드리드'],
   },
   {
     id: 'city_16',
@@ -183,6 +190,7 @@ export const CITIES = [
     lat: 34.0522,
     lon: -118.2437,
     timezone: 'America/Los_Angeles',
+    aliases: ['la', 'los angeles', '로스앤젤레스', '엘에이'],
   },
 ]
 
