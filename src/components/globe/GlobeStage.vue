@@ -31,11 +31,6 @@ const {
 
 /*
  * 시트에 완전히 가려지면 지구본 렌더링을 멈춥니다.
- *
- * IntersectionObserver 는 "화면 영역 안에 있는지"만 알 뿐
- * "다른 요소에 가려졌는지"는 알지 못합니다.
- * 그래서 모바일에서 시트가 지구본을 덮어도 지구본은 계속 그려졌고,
- * 그 위를 흐림 처리(backdrop-filter)까지 하느라 가장 많이 버벅였습니다.
  */
 watch(
   () => props.covered,
@@ -59,14 +54,7 @@ watch(
 )
 
 /*
- * 도시 날씨가 로드되면 마커를 갱신하고,
- * 강수/기온 레이어는 그 데이터로 그리므로 함께 다시 그립니다.
- *
- * ▶ deep: true 를 뺀 이유 (성능)
- * deep 감시는 배열 안 12개 도시 객체의 **모든 속성**을 재귀적으로 훑습니다.
- * 도시 하나에 24시간 예보 + 10일 예보가 들어 있어 수백 개 값을 매번 추적하죠.
- * 그런데 스토어는 `this.citiesWeather = data` 처럼 배열을 통째로 바꾸므로
- * deep 없이도 변화를 정확히 감지합니다. → 불필요한 추적 비용만 사라집니다.
+ * 도시 날씨가 로드되면 마커를 갱신
  */
 watch(
   () => weatherStore.citiesWeather,
@@ -131,24 +119,11 @@ watch(
 
 <style>
 /* 지구본 마커 스타일 (글로벌 전역 스타일로 등록해야 Globe.gl DOM 노드에 적용됨) */
-/*
- * ⚠️ .globe-marker-wrapper 에는 transform 을 쓰면 안 됩니다!
- * globe.gl(CSS2DRenderer)이 이 요소의 style.transform 에
- * 화면 좌표(translate)를 직접 써 넣기 때문에, 여기에 scale 을 주면
- * 인라인 스타일에 덮여 무시되거나 마커 위치가 어긋납니다.
- * → 크기 조절은 반드시 '안쪽' 요소(.globe-marker)에 적용합니다.
- */
 .globe-marker-wrapper {
   pointer-events: auto;
-  /*
-   * globe.gl 이 이 요소의 transform 을 1초에 60번 새로 써 넣습니다.
-   * will-change 로 "이건 계속 움직일 요소"라고 미리 알려주면
-   * 브라우저가 별도 레이어로 분리해 두어, 움직일 때마다 그림을
-   * 다시 칠하지 않고 위치만 옮깁니다.
-   */
   will-change: transform;
-  /* 마커 안쪽 변화가 페이지 전체 레이아웃 계산으로 번지지 않게 가둡니다 */
   contain: layout style;
+  perspective: 1000px;
 }
 
 .globe-marker {
@@ -162,16 +137,30 @@ watch(
   background: rgba(15, 23, 42, 0.75);
   border: 1.5px solid var(--marker-color, #38bdf8);
   box-shadow: 0 0 15px var(--marker-color, #38bdf8);
-  /* 확대·축소에 따라 useGlobe 가 --marker-scale 값을 바꿔줍니다 */
   transform: scale(var(--marker-scale, 1));
   transform-origin: center center;
-  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-style: preserve-3d;
+}
+
+/* 🔍 줌인 상태: 마커를 지면에 누워있는 3D 원판 받침대로 변형 */
+.globe-zoomed-in .globe-marker {
+  width: 36px;
+  height: 36px;
+  background: rgba(16, 185, 129, 0.35); /* 랜드마크 밑판 느낌의 초록/점토빛 발광 */
+  border: 2px solid var(--marker-color, #34d399);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.2);
+  transform: rotateX(65deg) scale(var(--marker-scale, 1));
 }
 
 .globe-marker:hover {
-  /* 현재 확대 배율을 유지한 채로 1.35배 더 키웁니다 */
-  transform: scale(calc(var(--marker-scale, 1) * 1.35));
-  z-index: 100;
+  transform: scale(calc(var(--marker-scale, 1) * 1.3));
+}
+
+/* 🔍 줌인 상태에서 호버 */
+.globe-zoomed-in .globe-marker:hover {
+  transform: rotateX(65deg) scale(calc(var(--marker-scale, 1) * 1.2));
+  background: rgba(16, 185, 129, 0.5);
 }
 
 .marker-pulse {
@@ -201,40 +190,61 @@ watch(
 .marker-dot {
   font-size: 16px;
   user-select: none;
+  transition: all 0.3s ease;
 }
 
-/* 🏛️ 클레이 랜드마크 이미지 — 마커 위에 떠 있는 형태 */
+/* 🔍 줌인 시 기존 단순 날씨 이모지는 자연스럽게 숨겨 랜드마크가 돋보이도록 함 */
+.globe-zoomed-in .has-landmark .marker-dot {
+  opacity: 0;
+  transform: scale(0);
+}
+
+/* 🏛️ 클레이 랜드마크 이미지 — 지면 받침대 위에 세워진 3D 입체 카드(Billboard) 스타일 */
 .marker-landmark {
   position: absolute;
-  bottom: 100%;
+  bottom: 25%; /* 받침대 중앙 중심선에 걸침 */
   left: 50%;
-  transform: translateX(-50%);
-  width: 48px;
-  height: 48px;
+  /* rotateX(-65deg)로 받침대의 65도 기울기를 완벽히 상쇄해 수직으로 우뚝 선 느낌을 줌 */
+  transform: translateX(-50%) rotateX(-65deg) scale(0);
+  transform-origin: bottom center;
+  width: 58px;
+  height: 58px;
   object-fit: contain;
-  border-radius: 10px;
-  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.6)) contrast(1.05);
   pointer-events: none;
-  animation: landmark-float 3s ease-in-out infinite;
-  margin-bottom: 4px;
+  opacity: 0;
+  transition: transform 0.5s cubic-bezier(0.34, 1.6, 0.64, 1), opacity 0.4s ease;
 }
-@keyframes landmark-float {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(-4px); }
+
+/* 🔍 줌인 되었을 때 랜드마크가 지면에서 뿅 튀어나옴 */
+.globe-zoomed-in .marker-landmark {
+  opacity: 1;
+  transform: translateX(-50%) rotateX(-65deg) scale(1.3);
+  animation: diorama-float 4s ease-in-out infinite alternate;
+}
+
+@keyframes diorama-float {
+  0% {
+    transform: translateX(-50%) rotateX(-65deg) scale(1.3) translateY(0);
+    filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.6));
+  }
+  100% {
+    transform: translateX(-50%) rotateX(-65deg) scale(1.3) translateY(-3px);
+    filter: drop-shadow(0 12px 16px rgba(0, 0, 0, 0.5));
+  }
 }
 
 /* 마커 아래 상시 표시되는 '도시명 + 기온' 라벨 (hover 없이도 정보가 보이도록) */
 .marker-label {
-  /* 지구본을 아주 멀리서 볼 때는 useGlobe 가 none 으로 바꿔 라벨을 숨깁니다 */
   display: var(--marker-label-display, block);
   position: absolute;
-  top: 108%;
+  top: 110%;
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
-  padding: 2px 7px;
-  background: rgba(2, 6, 23, 0.72);
-  border: 1px solid rgba(159, 228, 255, 0.35);
+  padding: 3px 8px;
+  background: rgba(2, 6, 23, 0.82);
+  border: 1px solid rgba(159, 228, 255, 0.4);
   border-radius: 9px;
   color: #e8f6ff;
   font-size: 11px;
@@ -242,6 +252,13 @@ watch(
   letter-spacing: -0.2px;
   pointer-events: none;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  transition: all 0.3s ease;
+}
+
+/* 🔍 줌인 시 눕혀진 원판에 맞춰 라벨이 세워져 보이게 각도 조절 */
+.globe-zoomed-in .marker-label {
+  transform: translateX(-50%) rotateX(-65deg) translateY(12px);
+  background: rgba(15, 23, 42, 0.9);
 }
 
 /* 나라 위에 마우스를 올렸을 때 뜨는 국가명 라벨 */
@@ -281,6 +298,11 @@ watch(
 .globe-marker:hover .marker-tooltip {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+
+/* 🔍 줌인 시 툴팁 각도도 조절 */
+.globe-zoomed-in .globe-marker:hover .marker-tooltip {
+  transform: translateX(-50%) rotateX(-65deg) translateY(-24px);
 }
 
 .tooltip-name {

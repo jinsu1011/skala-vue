@@ -1,9 +1,9 @@
 /**
  * 🏛️ 도시별 랜드마크 데이터
  *
- * 해외 8개 도시에 대한 클레이 스타일 3D 랜드마크 이미지 매핑.
+ * 각 도시의 클레이 스타일 3D 랜드마크 이미지 매핑.
  * 이미지는 public/images/landmarks/ 에 위치하며,
- * Vite 의 import.meta.env.BASE_URL 을 붙여 GitHub Pages 경로를 맞춥니다.
+ * Three.js objectsData 레이어를 통해 지구본 표면 위에 3D 스프라이트로 렌더링됩니다.
  */
 
 const BASE = import.meta.env.BASE_URL + 'images/landmarks/'
@@ -13,6 +13,16 @@ export const LANDMARKS = {
     name: 'N서울타워',
     nameEn: 'N Seoul Tower',
     image: `${BASE}seoul.jpg`,
+  },
+  city_07: {
+    name: '광안대교',
+    nameEn: 'Gwangan Bridge',
+    image: `${BASE}busan.jpg`,
+  },
+  city_08: {
+    name: '돌하르방',
+    nameEn: 'Dol Hareubang',
+    image: `${BASE}jeju.jpg`,
   },
   city_09: {
     name: '자유의 여신상',
@@ -58,3 +68,9 @@ export const LANDMARKS = {
 
 /** 도시 ID 로 랜드마크 조회 (없으면 null) */
 export const getLandmark = (cityId) => LANDMARKS[cityId] ?? null
+
+/** 이미지가 있는 랜드마크만 배열로 반환 */
+export const getAllLandmarks = () =>
+  Object.entries(LANDMARKS)
+    .filter(([, v]) => v.image)
+    .map(([id, v]) => ({ id, ...v }))

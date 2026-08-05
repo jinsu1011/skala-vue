@@ -308,6 +308,9 @@ export function useGlobe() {
         // 아주 멀리서 볼 때는 이름·기온 라벨을 숨겨 화면이 지저분해지지 않게 합니다
         containerEl.style.setProperty('--marker-label-display', alt > 2.6 ? 'none' : 'block')
 
+        // 🔍 줌 레벨에 따른 랜드마크 팝업 분기용 클래스 토글 (alt < 1.1 일 때 줌인으로 판단)
+        containerEl.classList.toggle('globe-zoomed-in', alt < 1.1)
+
         /*
          * 줌 단계가 바뀐 순간에만 마커 목록을 교체합니다.
          * (매번 교체하면 마커 DOM 을 계속 지웠다 다시 만들어 오히려 느려집니다)
