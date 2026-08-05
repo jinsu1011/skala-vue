@@ -203,6 +203,26 @@ watch(
   user-select: none;
 }
 
+/* 🏛️ 클레이 랜드마크 이미지 — 마커 위에 떠 있는 형태 */
+.marker-landmark {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: 10px;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.5));
+  pointer-events: none;
+  animation: landmark-float 3s ease-in-out infinite;
+  margin-bottom: 4px;
+}
+@keyframes landmark-float {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-4px); }
+}
+
 /* 마커 아래 상시 표시되는 '도시명 + 기온' 라벨 (hover 없이도 정보가 보이도록) */
 .marker-label {
   /* 지구본을 아주 멀리서 볼 때는 useGlobe 가 none 으로 바꿔 라벨을 숨깁니다 */

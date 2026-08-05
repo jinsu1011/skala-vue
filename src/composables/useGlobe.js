@@ -2,6 +2,7 @@ import { ref, onUnmounted } from 'vue'
 import Globe from 'globe.gl'
 import * as THREE from 'three'
 import countriesGeoJson from '@/assets/world-countries.json'
+import { getLandmark } from '@/data/landmarkData'
 
 /**
  * 🌍 useGlobe Composable — "모형(模型) 경계 지형 지구본" 버전
@@ -389,8 +390,16 @@ export function useGlobe() {
         const color = groupColors[d.group] || '#38bdf8'
         const temp = Number.isFinite(d.temp) ? Math.round(d.temp) : '--'
 
+        // 랜드마크 이미지 (있는 도시만)
+        const lm = getLandmark(d.id)
+        const landmarkHtml =
+          lm && lm.image
+            ? `<img class="marker-landmark" src="${lm.image}" alt="${lm.name}" />`
+            : ''
+
         el.innerHTML = `
           <div class="globe-marker" style="--marker-color: ${color};">
+            ${landmarkHtml}
             <span class="marker-pulse"></span>
             <span class="marker-dot">${d.icon || '📍'}</span>
             <div class="marker-label">${d.name} ${temp}°</div>
@@ -405,7 +414,6 @@ export function useGlobe() {
         el.style.cursor = 'pointer'
         el.onclick = (e) => {
           e.stopPropagation()
-          // 줌 단계가 바뀌어 마커가 다시 만들어져도 항상 최신 핸들러를 씁니다
           markerClickHandler(d.id)
         }
 

@@ -22,7 +22,7 @@ import { metFetchCurrentWeather, metFetchCityForecast } from '@/api/metNoApi'
 
 const API_URL = 'https://api.open-meteo.com/v1/forecast'
 
-// 16개 도시 정보 (국내 8개 + 해외 8개)
+// 11개 도시 정보 (국내 3개 + 해외 8개)
 export const CITIES = [
   {
     id: 'city_01',
@@ -32,56 +32,6 @@ export const CITIES = [
     region: '대한민국 서울특별시',
     lat: 37.5665,
     lon: 126.978,
-    timezone: 'Asia/Seoul',
-  },
-  {
-    id: 'city_02',
-    name: '인천',
-    englishName: 'Incheon',
-    countryGroup: 'KR',
-    region: '대한민국 인천광역시',
-    lat: 37.4563,
-    lon: 126.7052,
-    timezone: 'Asia/Seoul',
-  },
-  {
-    id: 'city_03',
-    name: '수원',
-    englishName: 'Suwon',
-    countryGroup: 'KR',
-    region: '대한민국 경기도 수원시',
-    lat: 37.2636,
-    lon: 127.0286,
-    timezone: 'Asia/Seoul',
-  },
-  {
-    id: 'city_04',
-    name: '대전',
-    englishName: 'Daejeon',
-    countryGroup: 'KR',
-    region: '대한민국 대전광역시',
-    lat: 36.3504,
-    lon: 127.3845,
-    timezone: 'Asia/Seoul',
-  },
-  {
-    id: 'city_05',
-    name: '대구',
-    englishName: 'Daegu',
-    countryGroup: 'KR',
-    region: '대한민국 대구광역시',
-    lat: 35.8714,
-    lon: 128.6014,
-    timezone: 'Asia/Seoul',
-  },
-  {
-    id: 'city_06',
-    name: '광주',
-    englishName: 'Gwangju',
-    countryGroup: 'KR',
-    region: '대한민국 광주광역시',
-    lat: 35.1595,
-    lon: 126.8526,
     timezone: 'Asia/Seoul',
   },
   {
