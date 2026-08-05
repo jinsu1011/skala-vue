@@ -27,9 +27,52 @@ export function useSolarSystem() {
   const labelCoords = ref([])
   const hoveredPlanet = ref(null)
   const selectedPlanet = ref(null) // 클릭하여 선택된 행성 데이터
+  let onEarthClickCallback = null
+
+  // ── 선택된 행성 강조 효과 ──
+  let prevSelectedId = null
+  const highlightSelected = (planetId) => {
+    // 이전 강조 해제
+    planetMeshes.forEach((item) => {
+      item.mesh.scale.set(1, 1, 1)
+      if (item.data.emissive) return
+      item.mesh.material.emissiveIntensity = 0.15
+    })
+
+    // 새로 선택된 행성 강조
+    if (planetId) {
+      const target = planetMeshes.find((p) => p.data.id === planetId)
+      if (target) {
+        target.mesh.scale.set(1.3, 1.3, 1.3)
+        if (!target.data.emissive) {
+          target.mesh.material.emissiveIntensity = 0.6
+        }
+      }
+    }
+    prevSelectedId = planetId
+  }
+
+  // ID로 행성 직접 선택 (라벨 클릭용)
+  const selectPlanetById = (id) => {
+    const planet = planetMeshes.find((p) => p.data.id === id)
+    if (!planet) return
+
+    if (planet.data.isEarth) {
+      if (onEarthClickCallback) onEarthClickCallback()
+    } else {
+      if (selectedPlanet.value && selectedPlanet.value.id === id) {
+        selectedPlanet.value = null
+        highlightSelected(null)
+      } else {
+        selectedPlanet.value = planet.data
+        highlightSelected(id)
+      }
+    }
+  }
 
   const initSolarSystem = (container, onEarthClick) => {
     if (!container) return
+    onEarthClickCallback = onEarthClick
 
     const width = container.clientWidth
     const height = container.clientHeight
@@ -169,28 +212,6 @@ export function useSolarSystem() {
       return null
     }
 
-    // ── 선택된 행성 강조 효과 ──
-    let prevSelectedId = null
-    const highlightSelected = (planetId) => {
-      // 이전 강조 해제
-      planetMeshes.forEach((item) => {
-        item.mesh.scale.set(1, 1, 1)
-        if (item.data.emissive) return
-        item.mesh.material.emissiveIntensity = 0.15
-      })
-
-      // 새로 선택된 행성 강조
-      if (planetId) {
-        const target = planetMeshes.find((p) => p.data.id === planetId)
-        if (target) {
-          target.mesh.scale.set(1.3, 1.3, 1.3)
-          if (!target.data.emissive) {
-            target.mesh.material.emissiveIntensity = 0.6
-          }
-        }
-      }
-      prevSelectedId = planetId
-    }
 
     // ── 클릭 감지 (안정화) ──
     // 포인터 이벤트로 마우스 + 터치 통합 처리
@@ -343,5 +364,5 @@ export function useSolarSystem() {
 
   onUnmounted(cleanup)
 
-  return { initSolarSystem, cleanup, labelCoords, hoveredPlanet, selectedPlanet }
+  return { initSolarSystem, cleanup, labelCoords, hoveredPlanet, selectedPlanet, selectPlanetById }
 }

@@ -14,7 +14,7 @@ const router = useRouter()
 const containerRef = ref(null)
 const showLabels = ref(true)
 
-const { initSolarSystem, labelCoords, hoveredPlanet, selectedPlanet } = useSolarSystem()
+const { initSolarSystem, labelCoords, hoveredPlanet, selectedPlanet, selectPlanetById } = useSolarSystem()
 
 // 지구 클릭 시 기존 날씨 지구본으로 이동
 const handleEarthClick = () => {
@@ -88,6 +88,7 @@ onMounted(async () => {
           opacity: label.visible ? 1 : 0,
           borderColor: label.color,
         }"
+        @click.stop="selectPlanetById(label.id)"
       >
         <span class="label-name">{{ label.name }}</span>
         <span class="label-temp" :style="{ color: label.color }">{{ label.temp }}</span>
@@ -299,6 +300,9 @@ onMounted(async () => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   transition: all 0.15s ease;
   white-space: nowrap;
+  pointer-events: auto;
+  cursor: pointer;
+  user-select: none;
 }
 
 .planet-label.hovered {
