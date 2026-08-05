@@ -64,11 +64,19 @@ import StoreCounter from '@/components/practices/library/StoreCounter.vue'
 // [Code Challenge p.208] Axios — Weather Example / JSON Example
 import AxiosWeather from '@/components/practices/library/AxiosWeather.vue'
 import AxiosJson from '@/components/practices/library/AxiosJson.vue'
+
+// [Code Challenge p.225~227] Element Plus — UI 라이브러리 실습
+import ElementFormChallenge from '@/components/practices/library/ElementFormChallenge.vue'
+import ElementProductChallenge from '@/components/practices/library/ElementProductChallenge.vue'
+import ElementFeedbackChallenge from '@/components/practices/library/ElementFeedbackChallenge.vue'
+
+// [Code Challenge p.247~249] Modern JavaScript (ES6+) 실무 검증 과제
+import EcmaScriptChallenge from '@/components/practices/library/EcmaScriptChallenge.vue'
 </script>
 
 <template>
   <div class="practice-archive">
-    <h2>📚 이전 실습 모음 (p.54 ~ p.208)</h2>
+    <h2>📚 이전 실습 모음 (p.54 ~ p.249)</h2>
     <p class="desc">
       App.vue 에 쌓아두었던 Code Challenge 결과물입니다. 이제 <code>/practices</code> 주소로
       분리되어 필요할 때만 Lazy Loading 됩니다.
@@ -126,6 +134,14 @@ import AxiosJson from '@/components/practices/library/AxiosJson.vue'
     <!-- p.208 Axios -->
     <AxiosWeather />
     <AxiosJson />
+
+    <!-- p.225~227 Element Plus -->
+    <ElementFormChallenge />
+    <ElementProductChallenge />
+    <ElementFeedbackChallenge />
+
+    <!-- p.247~249 Modern JavaScript (ES6+) -->
+    <EcmaScriptChallenge />
   </div>
 </template>
 
