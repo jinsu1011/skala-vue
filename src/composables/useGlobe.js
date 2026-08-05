@@ -530,10 +530,10 @@ export function useGlobe() {
           <div class="globe-marker${landmarkClass}" style="--marker-color: ${color};">
             <span class="marker-pulse"></span>
             <span class="marker-dot">${d.icon || '📍'}</span>
-            <div class="marker-label">${d.name} ${temp}°</div>
+            <div class="marker-label">${d.name}</div>
             <div class="marker-tooltip">
               <span class="tooltip-name">${d.name}</span>
-              <span class="tooltip-temp">${temp}°</span>
+              <span class="tooltip-temp">${temp}°C</span>
               <span class="tooltip-status">${d.status ?? ''}</span>
             </div>
           </div>
