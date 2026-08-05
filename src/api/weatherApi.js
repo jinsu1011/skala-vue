@@ -22,7 +22,7 @@ import { metFetchCurrentWeather, metFetchCityForecast } from '@/api/metNoApi'
 
 const API_URL = 'https://api.open-meteo.com/v1/forecast'
 
-// 12개 도시 정보 (국내 8개 + 해외 4개)
+// 16개 도시 정보 (국내 8개 + 해외 8개)
 export const CITIES = [
   {
     id: 'city_01',
@@ -144,6 +144,46 @@ export const CITIES = [
     lon: 2.3522,
     timezone: 'Europe/Paris',
   },
+  {
+    id: 'city_13',
+    name: '베이징',
+    englishName: 'Beijing',
+    countryGroup: 'INT',
+    region: '중국 베이징',
+    lat: 39.9042,
+    lon: 116.4074,
+    timezone: 'Asia/Shanghai',
+  },
+  {
+    id: 'city_14',
+    name: '모스크바',
+    englishName: 'Moscow',
+    countryGroup: 'INT',
+    region: '러시아 모스크바',
+    lat: 55.7558,
+    lon: 37.6173,
+    timezone: 'Europe/Moscow',
+  },
+  {
+    id: 'city_15',
+    name: '마드리드',
+    englishName: 'Madrid',
+    countryGroup: 'INT',
+    region: '스페인 마드리드',
+    lat: 40.4168,
+    lon: -3.7038,
+    timezone: 'Europe/Madrid',
+  },
+  {
+    id: 'city_16',
+    name: '로스앤젤레스',
+    englishName: 'Los Angeles',
+    countryGroup: 'INT',
+    region: '미국 로스앤젤레스',
+    lat: 34.0522,
+    lon: -118.2437,
+    timezone: 'America/Los_Angeles',
+  },
 ]
 
 /**
@@ -226,7 +266,7 @@ export const weatherGradient = (group, isDay = true) => {
 
 // 오프라인/오류 시 목(Mock) 데이터
 export const FALLBACK_WEATHER = CITIES.map((city, i) => {
-  const seed = [
+  const seedList = [
     { temp: 28, code: 0 },
     { temp: 27, code: 1 },
     { temp: 26, code: 2 },
@@ -239,7 +279,12 @@ export const FALLBACK_WEATHER = CITIES.map((city, i) => {
     { temp: 28, code: 0 },
     { temp: 19, code: 61 },
     { temp: 24, code: 2 },
-  ][i % 12]
+    { temp: 25, code: 1 },
+    { temp: 15, code: 3 },
+    { temp: 23, code: 0 },
+    { temp: 26, code: 0 },
+  ]
+  const seed = seedList[i % seedList.length]
   return {
     id: city.id,
     name: city.name,
