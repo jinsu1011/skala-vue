@@ -64,10 +64,11 @@ export function useSolarSystem() {
     sunLight.position.set(0, 0, 0)
     scene.add(sunLight)
 
-    // 별 배경
+    // ── 6. 별 배경 (StarField) ──
     const starGeo = new THREE.BufferGeometry()
-    const starPositions = new Float32Array(4000 * 3)
-    for (let i = 0; i < 4000; i++) {
+    const starCount = 800
+    const starPositions = new Float32Array(starCount * 3)
+    for (let i = 0; i < starCount; i++) {
       starPositions[i * 3] = (Math.random() - 0.5) * 500
       starPositions[i * 3 + 1] = (Math.random() - 0.5) * 500
       starPositions[i * 3 + 2] = (Math.random() - 0.5) * 500
@@ -76,7 +77,7 @@ export function useSolarSystem() {
     scene.add(
       new THREE.Points(
         starGeo,
-        new THREE.PointsMaterial({ color: 0xffffff, size: 0.8, transparent: true, opacity: 0.75 }),
+        new THREE.PointsMaterial({ color: 0xffffff, size: 0.7, transparent: true, opacity: 0.5 }),
       ),
     )
 

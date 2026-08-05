@@ -69,8 +69,9 @@ export function usePlanetGlobe() {
 
     // ── 6. 별 배경 ──
     const starGeo = new THREE.BufferGeometry()
-    const starPositions = new Float32Array(2000 * 3)
-    for (let i = 0; i < 2000; i++) {
+    const starCount = 500
+    const starPositions = new Float32Array(starCount * 3)
+    for (let i = 0; i < starCount; i++) {
       starPositions[i * 3] = (Math.random() - 0.5) * 300
       starPositions[i * 3 + 1] = (Math.random() - 0.5) * 300
       starPositions[i * 3 + 2] = (Math.random() - 0.5) * 300
@@ -79,7 +80,7 @@ export function usePlanetGlobe() {
     scene.add(
       new THREE.Points(
         starGeo,
-        new THREE.PointsMaterial({ color: 0xffffff, size: 0.6, transparent: true, opacity: 0.7 }),
+        new THREE.PointsMaterial({ color: 0xffffff, size: 0.5, transparent: true, opacity: 0.45 }),
       ),
     )
 
