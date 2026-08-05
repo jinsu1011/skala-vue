@@ -193,46 +193,43 @@ watch(
   transition: all 0.3s ease;
 }
 
-/* 🔍 줌인 시 기존 단순 날씨 이모지는 자연스럽게 숨겨 랜드마크가 돋보이도록 함 */
-.globe-zoomed-in .has-landmark .marker-dot {
+/*
+ * 🔍 줌인 상태에서 3D 모형이 서 있는 도시는 받침대를 얇은 링으로 줄입니다.
+ *
+ * HTML 마커는 WebGL 화면 **위에** 그려지므로, 받침 원판을 그대로 두면
+ * 에펠탑이나 타워브리지의 몸통을 원판이 가려 버립니다.
+ * 모형이 있는 곳에서는 원판 대신 발밑을 표시하는 링만 남깁니다.
+ */
+.globe-zoomed-in .globe-marker.has-landmark {
+  width: 22px;
+  height: 22px;
+  background: transparent;
+  border-color: color-mix(in srgb, var(--marker-color, #34d399) 55%, transparent);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.globe-zoomed-in .globe-marker.has-landmark .marker-dot {
   opacity: 0;
-  transform: scale(0);
+  transform: scale(0.3);
 }
 
-/* 🏛️ 클레이 랜드마크 이미지 — 지면 받침대 위에 세워진 3D 입체 카드(Billboard) 스타일 */
-.marker-landmark {
-  position: absolute;
-  bottom: 25%; /* 받침대 중앙 중심선에 걸침 */
-  left: 50%;
-  /* rotateX(-65deg)로 받침대의 65도 기울기를 완벽히 상쇄해 수직으로 우뚝 선 느낌을 줌 */
-  transform: translateX(-50%) rotateX(-65deg) scale(0);
-  transform-origin: bottom center;
-  width: 58px;
-  height: 58px;
-  object-fit: contain;
-  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.6)) contrast(1.05);
-  pointer-events: none;
-  opacity: 0;
-  transition: transform 0.5s cubic-bezier(0.34, 1.6, 0.64, 1), opacity 0.4s ease;
+.globe-zoomed-in .globe-marker.has-landmark:hover {
+  background: color-mix(in srgb, var(--marker-color, #34d399) 25%, transparent);
 }
 
-/* 🔍 줌인 되었을 때 랜드마크가 지면에서 뿅 튀어나옴 */
-.globe-zoomed-in .marker-landmark {
-  opacity: 1;
-  transform: translateX(-50%) rotateX(-65deg) scale(1.3);
-  animation: diorama-float 4s ease-in-out infinite alternate;
+.globe-zoomed-in .globe-marker.has-landmark .marker-pulse {
+  animation: none;
 }
 
-@keyframes diorama-float {
-  0% {
-    transform: translateX(-50%) rotateX(-65deg) scale(1.3) translateY(0);
-    filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.6));
-  }
-  100% {
-    transform: translateX(-50%) rotateX(-65deg) scale(1.3) translateY(-3px);
-    filter: drop-shadow(0 12px 16px rgba(0, 0, 0, 0.5));
-  }
-}
+/*
+ * 🏛️ 랜드마크는 CSS 가 아니라 three.js 3D 모형으로 그립니다.
+ *
+ * 예전에는 여기에 `.marker-landmark` 이미지를 rotateX 로 억지로 세워 뒀습니다.
+ * 하지만 HTML 마커는 늘 화면을 정면으로 바라보기 때문에, 지구본을 돌리면
+ * 그림만 제자리에 남아 공중에 뜬 스티커처럼 보였습니다.
+ * 지금은 useGlobe 의 objects 레이어가 지표면 좌표에 입체 모형을 세우고,
+ * 이 마커는 그 발밑 받침대와 날씨 라벨만 담당합니다.
+ */
 
 /* 마커 아래 상시 표시되는 '도시명 + 기온' 라벨 (hover 없이도 정보가 보이도록) */
 .marker-label {

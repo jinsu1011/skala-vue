@@ -4,6 +4,7 @@ import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { CITIES, FALLBACK_WEATHER, fetchCityForecast, weatherGradient } from '@/api/weatherApi'
 import { useConfigStore } from '@/stores/configStore'
 import { getLandmark } from '@/data/landmarkData'
+import LandmarkModel3D from '@/components/landmark/LandmarkModel3D.vue'
 
 /*
  * [실습 과제 p.209 - 요구사항 3] 상세 날씨에도 단위 설정 변경 적용
@@ -202,9 +203,9 @@ const landmark = computed(() => {
 
         <p v-if="cityDetail.comment" class="sky-comment">💬 {{ cityDetail.comment }}</p>
 
-        <!-- 🏛️ 랜드마크 이미지 -->
-        <div v-if="landmark && landmark.image" class="landmark-card">
-          <img :src="landmark.image" :alt="landmark.name" class="landmark-img" />
+        <!-- 🏛️ 랜드마크 3D 모형 (지구본에 세워지는 것과 같은 모형) -->
+        <div v-if="landmark && landmark.model" class="landmark-card">
+          <LandmarkModel3D :model="landmark.model" :size="96" />
           <span class="landmark-name">{{ landmark.name }}</span>
         </div>
 
@@ -417,13 +418,6 @@ const landmark = computed(() => {
   border-radius: 16px;
   backdrop-filter: blur(8px);
   max-width: 280px;
-}
-.landmark-img {
-  width: 56px;
-  height: 56px;
-  border-radius: 12px;
-  object-fit: cover;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 .landmark-name {
   font-size: 0.82rem;

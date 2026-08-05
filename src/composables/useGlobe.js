@@ -2,7 +2,8 @@ import { ref, onUnmounted } from 'vue'
 import Globe from 'globe.gl'
 import * as THREE from 'three'
 import countriesGeoJson from '@/assets/world-countries.json'
-import { getLandmark } from '@/data/landmarkData'
+import { getLandmark, hasLandmark } from '@/data/landmarkData'
+import { buildLandmarkModel, disposeLandmarkModel } from '@/three/landmarkModels'
 
 /**
  * 🌍 useGlobe Composable — "모형(模型) 경계 지형 지구본" 버전
@@ -80,6 +81,54 @@ export function useGlobe() {
   let markerCities = [] // 전체 도시 데이터 원본
   let markerClickHandler = () => {}
   let markerLod = null // 'far' | 'near'
+
+  /*
+   * 🏛️ 랜드마크 3D 모형 (구글어스처럼 지면에 서 있는 입체 모형)
+   *
+   * 나라 다각형이 지표면에서 0.012 만큼 솟아 있으므로, 모형도 그 바로 위에
+   * 세워야 땅에 파묻히지 않고 **지면을 딛고 선** 것처럼 보입니다.
+   *
+   * 모형은 도시마다 한 번만 만들어 Map 에 넣어 두고 재사용합니다.
+   * (줌 단계가 바뀔 때마다 다시 만들면 매번 수십 개의 도형을 새로 깎게 됩니다)
+   *
+   * 표시 기준도 마커 LOD 와 같은 이유로 두 단계를 둡니다.
+   * 멀리서 보면 모형이 점만 해져 화면만 지저분해지고 그리기 비용만 나가므로,
+   * 0.9 아래로 내려오면 세우고 1.3 위로 올라가면 치웁니다.
+   */
+  const LANDMARK_ALTITUDE = 0.013
+  const LANDMARK_SHOW_BELOW = 0.9
+  const LANDMARK_HIDE_ABOVE = 1.3
+
+  const landmarkModels = new Map() // cityId → THREE.Group
+  let landmarksVisible = false
+
+  /** 도시의 랜드마크 모형을 가져옵니다 (처음 한 번만 만듭니다) */
+  const getLandmarkModel = (cityId) => {
+    if (landmarkModels.has(cityId)) return landmarkModels.get(cityId)
+
+    const lm = getLandmark(cityId)
+    const model = buildLandmarkModel(lm?.model, {
+      scale: lm?.scale ?? 1,
+      heading: lm?.heading ?? 0,
+    })
+    landmarkModels.set(cityId, model)
+    return model
+  }
+
+  /** 모형이 준비된 도시만 추립니다 */
+  const citiesWithLandmark = () => markerCities.filter((c) => hasLandmark(c.id))
+
+  /** 현재 카메라 높이에 맞춰 모형을 세우거나 치웁니다 */
+  const syncLandmarks = (alt) => {
+    if (!globe) return
+
+    const next =
+      alt <= LANDMARK_SHOW_BELOW ? true : alt >= LANDMARK_HIDE_ABOVE ? false : landmarksVisible
+
+    if (next === landmarksVisible) return
+    landmarksVisible = next
+    globe.objectsData(next ? citiesWithLandmark() : [])
+  }
 
   /** 현재 높이에서 어떤 단계여야 하는지 결정 (중간 구간은 지금 단계를 유지) */
   const resolveLod = (alt, current) => {
@@ -320,6 +369,9 @@ export function useGlobe() {
           markerLod = nextLod
           globe.htmlElementsData(citiesForLod(markerCities, markerLod))
         }
+
+        // 🏛️ 가까이 내려오면 랜드마크 3D 모형을 지면에 세웁니다
+        syncLandmarks(alt)
       }
 
       controlsChangeHandler = () => {
@@ -339,10 +391,25 @@ export function useGlobe() {
       scene.add(starField)
     }
 
-    // 7. 12개 도시 커스텀 HTML 마커 배치
+    // 7. 랜드마크 3D 모형 레이어 설정
+    globe
+      .objectsData([])
+      .objectLat((d) => d.lat)
+      .objectLng((d) => d.lon)
+      .objectAltitude(LANDMARK_ALTITUDE)
+      /*
+       * objectFacesSurface(true) 는 모형의 +Z 축을 지표면 바깥쪽으로 세웁니다.
+       * 덕분에 모형이 화면이 아니라 **자기가 선 땅**을 기준으로 서 있게 되고,
+       * 지구본을 돌리면 모형도 같이 기울어집니다. (구글어스와 같은 방식)
+       */
+      .objectFacesSurface(true)
+      .objectThreeObject((d) => getLandmarkModel(d.id))
+      .onObjectClick((d) => markerClickHandler(d?.id))
+
+    // 8. 12개 도시 커스텀 HTML 마커 배치
     updateMarkers(citiesWeather, onSelectCity)
 
-    // 8. 리사이즈 대응
+    // 9. 리사이즈 대응
     const applySize = () => {
       if (!globe || !containerEl) return
       const w = containerEl.clientWidth || window.innerWidth
@@ -359,7 +426,7 @@ export function useGlobe() {
       resizeObserver.observe(containerEl)
     }
 
-    // 9. 화면에서 사라지면 렌더링을 멈추도록 감시 시작
+    // 10. 화면에서 사라지면 렌더링을 멈추도록 감시 시작
     watchVisibility(containerEl)
 
     // 지구본이 만들어지기 전에 이미 "멈춰야 할 이유"가 쌓여 있었다면 지금 반영합니다
@@ -381,6 +448,9 @@ export function useGlobe() {
       markerLod = resolveLod(globe.pointOfView()?.altitude ?? 2.2, null)
     }
 
+    // 랜드마크 모형이 켜져 있다면 새 도시 목록으로 다시 세웁니다
+    if (landmarksVisible) globe.objectsData(citiesWithLandmark())
+
     globe
       .htmlElementsData(citiesForLod(markerCities, markerLod))
       .htmlLat((d) => d.lat)
@@ -393,16 +463,18 @@ export function useGlobe() {
         const color = groupColors[d.group] || '#38bdf8'
         const temp = Number.isFinite(d.temp) ? Math.round(d.temp) : '--'
 
-        // 랜드마크 이미지 (있는 도시만)
-        const lm = getLandmark(d.id)
-        const landmarkHtml =
-          lm && lm.image
-            ? `<img class="marker-landmark" src="${lm.image}" alt="${lm.name}" />`
-            : ''
+        /*
+         * 랜드마크는 더 이상 여기서 그리지 않습니다.
+         * 예전에는 <img> 를 마커 안에 넣었는데, HTML 마커는 항상 화면을 정면으로
+         * 바라보기 때문에 지구본을 돌려도 그림만 제자리라 공중에 떠 보였습니다.
+         * 지금은 objects 레이어의 3D 모형이 지면에 직접 서 있고,
+         * 이 마커는 그 발밑의 받침대 + 날씨 라벨 역할만 합니다.
+         */
+        // 모형이 서 있는 도시는 받침대를 얇은 링으로 줄여 모형을 가리지 않게 합니다
+        const landmarkClass = hasLandmark(d.id) ? ' has-landmark' : ''
 
         el.innerHTML = `
-          <div class="globe-marker" style="--marker-color: ${color};">
-            ${landmarkHtml}
+          <div class="globe-marker${landmarkClass}" style="--marker-color: ${color};">
             <span class="marker-pulse"></span>
             <span class="marker-dot">${d.icon || '📍'}</span>
             <div class="marker-label">${d.name} ${temp}°</div>
@@ -424,6 +496,18 @@ export function useGlobe() {
       })
   }
 
+  /*
+   * 도시를 정확히 머리 위에서 내려다보면 랜드마크가 납작해 보입니다.
+   * 탑처럼 위로 솟은 모형은 위에서 보면 그냥 점이 되기 때문입니다.
+   *
+   * 그래서 카메라를 도시보다 조금 남쪽(위도 -5°)에 세웁니다.
+   * 지구본 카메라는 늘 지구 중심을 바라보므로, 이렇게 하면 도시를
+   * **약 18° 비스듬히** 내려다보게 되어 모형이 서 있는 게 보입니다. (구글어스와 비슷한 시점)
+   * 덤으로 도시가 화면 중앙보다 살짝 위에 놓여, 아래에서 올라오는
+   * 상세 시트에 가려지지 않습니다.
+   */
+  const FLY_TILT_DEG = 6
+
   /**
    * 지구본 시점 비행 애니메이션
    */
@@ -435,7 +519,9 @@ export function useGlobe() {
     if (controls) {
       controls.autoRotate = false
     }
-    globe.pointOfView({ lat, lng, altitude }, duration)
+    // 극지방에서 위도가 넘어가지 않도록 범위를 잘라 둡니다
+    const viewLat = Math.max(-85, Math.min(85, lat - FLY_TILT_DEG))
+    globe.pointOfView({ lat: viewLat, lng, altitude }, duration)
   }
 
   /**
@@ -575,7 +661,7 @@ export function useGlobe() {
       try {
         // 렌더 루프를 먼저 멈춰야 이미 정리된 renderer 를 다시 그리지 않습니다
         globe.pauseAnimation()
-        globe.htmlElementsData([]).polygonsData([])
+        globe.htmlElementsData([]).polygonsData([]).objectsData([])
         const renderer = globe.renderer()
         if (renderer) {
           renderer.dispose()
@@ -586,6 +672,11 @@ export function useGlobe() {
       }
       globe = null
     }
+
+    // 랜드마크 모형이 쥐고 있던 지오메트리·재질을 반납합니다
+    for (const model of landmarkModels.values()) disposeLandmarkModel(model)
+    landmarkModels.clear()
+    landmarksVisible = false
   }
 
   onUnmounted(() => {
